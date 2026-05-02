@@ -15,7 +15,7 @@ It is not a textbook. Keep the project formula-focused.
 
 Current draft:
 
-- v0.1.0: Initial complete PDF draft with LaTeX source, formula sections, shape tables, and GitHub Actions build.
+- [v0.1.0 - Initial Complete Draft](https://github.com/Jerry-0821/deep-learning-formula-cheatsheet/releases/tag/v0.1.0): Initial complete PDF draft with LaTeX source, formula sections, shape tables, and GitHub Actions build.
 
 ## Preview
 
