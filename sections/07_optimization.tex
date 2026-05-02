@@ -94,6 +94,7 @@ u_t
 \]
 \Shapes{$u_t,g_t,\theta_t$ have identical parameter shape.}
 \Use{Momentum update rule.}
+\Notes{Uses course-style EWA scaling with $(1-\beta)$.}
 
 \FormulaName{Layer-wise momentum}
 \[
@@ -150,6 +151,7 @@ s_t
 \]
 \Shapes{$s_t,g_t,\theta_t$ have identical parameter shape.}
 \Use{Elementwise squared-gradient scaling.}
+\Notes{RMSProp is shown without bias correction.}
 
 \FormulaName{Layer-wise RMSProp}
 \[

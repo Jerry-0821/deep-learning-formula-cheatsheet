@@ -51,6 +51,10 @@ P
 =
 \softmax(S).
 \]
+\[
+P_{i,:}=\softmax(S_{i,:}).
+\]
+\Notes{Softmax is applied row-wise over key positions.}
 \FormulaName{Attention output}
 \[
 O
@@ -174,6 +178,7 @@ H
 H \in \R^{T \times (h d_v)}.
 \]
 \Use{Parallel attention heads.}
+\Notes{Common setting: $d_k=d_v=d_{\mathrm{model}}/h$.}
 
 \subsection{Output Projection}
 

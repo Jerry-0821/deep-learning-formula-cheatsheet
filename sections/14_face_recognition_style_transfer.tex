@@ -44,7 +44,7 @@ d(x_i,x_j)
 
 \subsection{Content Cost}
 
-\FormulaName{Content objective}
+\FormulaName{Simplified content cost}
 \[
 \cost_{\mathrm{content}}(C,G)
 =
@@ -54,6 +54,17 @@ A_C^{[l]} - A_G^{[l]}
 \right\rVert_F^2.
 \]
 \Use{Content similarity between generated and content image activations.}
+
+\FormulaName{Course-normalized content cost}
+\[
+\cost_{\mathrm{content}}(C,G)
+=
+\frac{1}{4n_H^{[l]}n_W^{[l]}n_C^{[l]}}
+\left\lVert
+A_C^{[l]} - A_G^{[l]}
+\right\rVert_F^2.
+\]
+\Use{Course-normalized content objective.}
 
 \subsection{Gram Matrix}
 
