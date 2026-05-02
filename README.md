@@ -7,6 +7,22 @@ tensor shapes, notation consistency, update rules, common variants, and minimal
 labels. It is not a beginner tutorial and not a long explanation document.
 It is not a textbook. Keep the project formula-focused.
 
+## Download
+
+[Download the PDF](./main.pdf)
+
+## Preview
+
+![Notation preview](assets/preview/page-01.png)
+
+![Optimization preview](assets/preview/page-optimization.png)
+
+![Style transfer preview](assets/preview/page-style-transfer.png)
+
+![Attention preview](assets/preview/page-attention.png)
+
+![Transformer preview](assets/preview/page-transformer.png)
+
 ## Current Status
 
 Current scaffold:
