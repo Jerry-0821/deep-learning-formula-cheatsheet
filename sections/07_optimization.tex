@@ -1,6 +1,6 @@
 \section{Gradient Descent and Optimization}
 
-\subsection{Basic Gradient Descent}
+\subsection{Basic Gradient Descent \textbf{[Core]}}
 
 \FormulaName{Generic update}
 \[
@@ -27,7 +27,7 @@ b^{[l]}, db^{[l]}
 \]
 \Use{Dense-layer parameter update.}
 
-\subsection{Mini-batch Gradient Descent}
+\subsection{Mini-batch Gradient Descent \textbf{[Core]}}
 
 \FormulaName{Mini-batch}
 \[
@@ -57,7 +57,7 @@ Y^{\{k\}} \in \R^{n_y \times m_k}.
 \]
 \Use{Mini-batch parameter update.}
 
-\subsection{Exponentially Weighted Average}
+\subsection{Exponentially Weighted Average \textbf{[Optional]}}
 
 \FormulaName{EWA}
 \[
@@ -72,7 +72,7 @@ v_t = \beta v_{t-1} + (1-\beta)q_t.
 \Notes{$q_t$ is the observed quantity; $v_t$ is its exponentially weighted average.}
 \Notes{Here $t$ denotes optimizer/update step, not sequence time step or mini-batch index.}
 
-\subsection{Momentum}
+\subsection{Momentum \textbf{[Derived]}}
 
 \FormulaName{Generic momentum update}
 \[
@@ -128,7 +128,7 @@ b^{[l]}_{t-1}
 \Shapes{$u_{dW^{[l]},t} \in \R^{n^{[l]} \times n^{[l-1]}}$; $u_{db^{[l]},t} \in \R^{n^{[l]} \times 1}$.}
 \Use{Layer-wise momentum accumulators.}
 
-\subsection{RMSProp}
+\subsection{RMSProp \textbf{[Derived]}}
 
 \FormulaName{Generic RMSProp update}
 \[
@@ -187,7 +187,7 @@ b^{[l]}_{t-1}
 \Shapes{$s_{dW^{[l]},t} \in \R^{n^{[l]} \times n^{[l-1]}}$; $s_{db^{[l]},t} \in \R^{n^{[l]} \times 1}$.}
 \Notes{Squares, square roots, and divisions are elementwise.}
 
-\subsection{Adam}
+\subsection{Adam \textbf{[Core]}}
 
 \FormulaName{Generic Adam update}
 \[
@@ -240,7 +240,7 @@ m_{db^{[l]}}, v_{db^{[l]}}
 \]
 \Use{Dense-layer Adam state shapes.}
 
-\subsection{Learning Rate Decay}
+\subsection{Learning Rate Decay \textbf{[Optional]}}
 
 \begin{center}
 \begin{tabular}{ll}
@@ -260,7 +260,7 @@ Step &
 \end{center}
 \Use{Learning-rate schedule.}
 
-\subsection{Hyperparameter Sampling (Log Scale)}
+\subsection{Hyperparameter Sampling (Log Scale) \textbf{[Optional]}}
 
 \FormulaName{Log-scale learning-rate sample}
 \[
@@ -271,7 +271,7 @@ r \sim \operatorname{Uniform}(a,b).
 \Shapes{$a,b,r\in\R$; $\alpha>0$.}
 \Use{Learning-rate search over orders of magnitude.}
 
-\subsection{Gradient Clipping}
+\subsection{Gradient Clipping \textbf{[Optional]}}
 
 \FormulaName{Elementwise clipping}
 \[

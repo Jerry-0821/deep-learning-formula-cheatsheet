@@ -1,6 +1,6 @@
 \section{Word Embeddings and Language Models}
 
-\subsection{Vocabulary and One-hot Representation}
+\subsection{Vocabulary and One-hot Representation \textbf{[Derived]}}
 
 \FormulaName{One-hot token}
 \[
@@ -14,7 +14,7 @@ O^{\langle t\rangle}
 \]
 \Use{One-hot token representation.}
 
-\subsection{Embedding Matrix and Lookup}
+\subsection{Embedding Matrix and Lookup \textbf{[Core]}}
 
 \FormulaName{Embedding matrix}
 \[
@@ -50,7 +50,7 @@ e_w = E_{\mathrm{row}}\transpose o_w.
 \]
 \Use{Alternative row-wise embedding convention.}
 
-\subsection{Embedding Sequence Tensor}
+\subsection{Embedding Sequence Tensor \textbf{[Derived]}}
 
 \FormulaName{Time-step embedding sequence}
 \[
@@ -69,7 +69,7 @@ E^{\langle t\rangle}
 \Use{Sequence of embedding vectors.}
 \Notes{Main convention keeps time steps as separate $d_e \times m$ matrices; frameworks may stack batch-first or time-first.}
 
-\subsection{Cosine Similarity}
+\subsection{Cosine Similarity \textbf{[Core]}}
 
 \FormulaName{Cosine similarity}
 \[
@@ -85,7 +85,7 @@ u,v\in\R^{d_e}.
 \]
 \Use{Embedding similarity.}
 
-\subsection{Word Analogy Objective}
+\subsection{Word Analogy Objective \textbf{[Optional]}}
 
 \FormulaName{Analogy vector}
 \[
@@ -105,7 +105,7 @@ v_b - v_a + v_c
 \Use{Vector-offset analogy search.}
 \Notes{Exclude source words from the candidate set if needed.}
 
-\subsection{Language Model Softmax}
+\subsection{Language Model Softmax \textbf{[Core]}}
 
 \FormulaName{Vocabulary logits}
 \[
@@ -142,7 +142,7 @@ z^{\langle t\rangle},
 \]
 \Use{Next-token probability distribution.}
 
-\subsection{Vocabulary Cross-Entropy}
+\subsection{Vocabulary Cross-Entropy \textbf{[Core]}}
 
 \FormulaName{Single time-step loss}
 \[
@@ -173,7 +173,7 @@ y_k^{\langle \tau\rangle}
 \]
 \Use{Language-model negative log-likelihood.}
 
-\subsection{Perplexity}
+\subsection{Perplexity \textbf{[Derived]}}
 
 \FormulaName{Average token negative log-likelihood}
 \[
@@ -196,7 +196,7 @@ P(w_i \given w_{<i}).
 \Use{Language-model evaluation metric.}
 \Notes{$N$ is the number of evaluated tokens; $w_{<i}$ denotes tokens before position $i$.}
 
-\subsection{Skip-gram Objective}
+\subsection{Skip-gram Objective \textbf{[Optional]}}
 
 \FormulaName{Skip-gram log-likelihood}
 \[
@@ -220,7 +220,7 @@ P(w_o \given w_c)
 \Shapes{$u_o,u_w,v_c\in\R^{d_e}$.}
 \Use{Skip-gram softmax objective.}
 
-\subsection{Negative Sampling}
+\subsection{Negative Sampling \textbf{[Core]}}
 
 \FormulaName{Negative-sampling objective}
 \[
@@ -235,7 +235,7 @@ P(w_o \given w_c)
 \Shapes{$u_o,u_k,v_c\in\R^{d_e}$; $K$ is the number of negative samples.}
 \Use{Efficient approximation to softmax.}
 
-\subsection{GloVe Objective}
+\subsection{GloVe Objective \textbf{[Derived]}}
 
 \FormulaName{Weighted co-occurrence objective}
 \[

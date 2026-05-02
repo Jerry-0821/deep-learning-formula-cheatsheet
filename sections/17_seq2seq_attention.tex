@@ -1,6 +1,6 @@
 \section{Seq2Seq, Beam Search, and Attention}
 
-\subsection{Conditional Sequence Probability}
+\subsection{Conditional Sequence Probability \textbf{[Core]}}
 
 \FormulaName{Autoregressive probability}
 \[
@@ -31,7 +31,7 @@ x
 \]
 \Use{Autoregressive sequence probability.}
 
-\subsection{Encoder-Decoder State Notation}
+\subsection{Encoder-Decoder State Notation \textbf{[Derived]}}
 
 \FormulaName{Encoder states}
 \[
@@ -64,7 +64,7 @@ b_y
 \]
 \Use{Encoder-decoder state notation.}
 
-\subsection{Greedy Decoding}
+\subsection{Greedy Decoding \textbf{[Derived]}}
 
 \FormulaName{Greedy token choice}
 \[
@@ -81,7 +81,7 @@ x
 \]
 \Use{Greedy token selection.}
 
-\subsection{Beam Search Score}
+\subsection{Beam Search Score \textbf{[Core]}}
 
 \FormulaName{Candidate sequence score}
 \[
@@ -109,7 +109,7 @@ y^{\langle 1:t\rangle}
 \]
 \Use{Keep top $K$ partial sequences.}
 
-\subsection{Length Normalization}
+\subsection{Length Normalization \textbf{[Optional]}}
 
 \FormulaName{Length-normalized score}
 \[
@@ -129,7 +129,7 @@ x
 \Use{Beam-search score with length penalty.}
 \Notes{$\alpha$ here is a length-normalization exponent, not the optimizer learning rate.}
 
-\subsection{Attention Energy}
+\subsection{Attention Energy \textbf{[Derived]}}
 
 \FormulaName{Additive attention energy}
 \[
@@ -170,7 +170,7 @@ v_a \in \R^{n_e \times 1}.
 \]
 \Use{Alignment score between decoder step $\langle t\rangle$ and encoder step $\langle t'\rangle$.}
 
-\subsection{Attention Weights}
+\subsection{Attention Weights \textbf{[Core]}}
 
 \FormulaName{Attention distribution}
 \[
@@ -192,7 +192,7 @@ v_a \in \R^{n_e \times 1}.
 \Use{Attention distribution over encoder time steps.}
 \Notes{$\alpha^{\langle t,t'\rangle}$ is an attention weight, not the optimizer learning rate.}
 
-\subsection{Context Vector}
+\subsection{Context Vector \textbf{[Derived]}}
 
 \FormulaName{Attention context}
 \[
@@ -223,7 +223,7 @@ n_a \times m.
 \]
 \Use{Weighted encoder summary for decoder step $\langle t\rangle$.}
 
-\subsection{Attention Decoder Step}
+\subsection{Attention Decoder Step \textbf{[Core]}}
 
 \FormulaName{Decoder update}
 \[
@@ -286,7 +286,7 @@ b_o \in \R^{n_y \times 1}.
 \]
 \Use{Attention-based decoder step.}
 
-\subsection{BLEU Score}
+\subsection{BLEU Score \textbf{[Optional]}}
 
 \FormulaName{BLEU}
 \[

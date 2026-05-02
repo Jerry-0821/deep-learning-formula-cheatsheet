@@ -1,6 +1,6 @@
 \section{Transformer and Self-Attention}
 
-\subsection{Token Representation and Q/K/V Projections}
+\subsection{Token Representation and Q/K/V Projections \textbf{[Derived]}}
 
 \FormulaName{Input sequence representation}
 \[
@@ -37,7 +37,7 @@ V \in \R^{T_k \times d_v}.
 \]
 \Use{Linear projections for attention.}
 
-\subsection{Scaled Dot-Product Attention}
+\subsection{Scaled Dot-Product Attention \textbf{[Core]}}
 
 \FormulaName{Attention scores}
 \[
@@ -73,7 +73,7 @@ V.
 \]
 \Use{Scaled dot-product attention.}
 
-\subsection{Attention Shape Check}
+\subsection{Attention Shape Check \textbf{[Derived]}}
 
 \FormulaName{Score shape}
 \[
@@ -97,7 +97,7 @@ O \in \R^{T_q \times d_v}.
 \]
 \Use{Attention dimension check.}
 
-\subsection{Causal Mask}
+\subsection{Causal Mask \textbf{[Optional]}}
 
 \FormulaName{Masked scores}
 \[
@@ -129,7 +129,7 @@ P
 \Use{Prevent attention to future tokens.}
 \Notes{Used in autoregressive decoder self-attention.}
 
-\subsection{Multi-Head Attention}
+\subsection{Multi-Head Attention \textbf{[Core]}}
 
 \FormulaName{Head projections}
 \[
@@ -180,7 +180,7 @@ H \in \R^{T \times (h d_v)}.
 \Use{Parallel attention heads.}
 \Notes{Common setting: $d_k=d_v=d_{\mathrm{model}}/h$.}
 
-\subsection{Output Projection}
+\subsection{Output Projection \textbf{[Derived]}}
 
 \FormulaName{Multi-head output projection}
 \[
@@ -206,7 +206,7 @@ W_O
 \]
 \Use{Project concatenated heads back to model width.}
 
-\subsection{Position-wise Feed-Forward Network}
+\subsection{Position-wise Feed-Forward Network \textbf{[Derived]}}
 
 \FormulaName{Token-wise FFN}
 \[
@@ -265,7 +265,7 @@ b_2 \in \R^{d_{\mathrm{model}} \times 1}.
 \Use{Token-wise feed-forward transformation.}
 \Notes{Token-wise FFN uses row-vector convention; $\phi$ is often ReLU or GELU.}
 
-\subsection{Positional Encoding}
+\subsection{Positional Encoding \textbf{[Derived]}}
 
 \FormulaName{Input with position information}
 \[
@@ -301,7 +301,7 @@ PE_{\mathrm{pos},2i+1}
 \]
 \Use{Inject token-position information.}
 
-\subsection{Residual Connection and Layer Normalization}
+\subsection{Residual Connection and Layer Normalization \textbf{[Optional]}}
 
 \FormulaName{Layer normalization}
 \[
@@ -350,7 +350,7 @@ X
 \Use{Residual connection with normalization.}
 \Notes{Original Transformer commonly uses post-norm; many modern Transformers use pre-norm.}
 
-\subsection{Transformer Block Pipeline}
+\subsection{Transformer Block Pipeline \textbf{[Core]}}
 
 \FormulaName{Encoder block, post-norm}
 \[

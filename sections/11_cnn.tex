@@ -1,6 +1,6 @@
 \section{Convolutional Neural Networks}
 
-\subsection{CNN Tensor Convention}
+\subsection{CNN Tensor Convention \textbf{[Derived]}}
 
 \FormulaName{NHWC activations}
 \[
@@ -15,7 +15,7 @@ A^{[l]}
 \Use{CNN batch tensor convention.}
 \Notes{$n_C^{[l]}$ equals the number of filters in layer $l$.}
 
-\subsection{Convolution Output Size}
+\subsection{Convolution Output Size \textbf{[Core]}}
 
 \FormulaName{Spatial output size}
 \[
@@ -51,7 +51,7 @@ A^{[l]}
 \]
 \Use{Convolution spatial output size.}
 
-\subsection{Multi-channel Convolution}
+\subsection{Multi-channel Convolution \textbf{[Derived]}}
 
 \FormulaName{One output position and channel}
 \[
@@ -77,7 +77,7 @@ b^{[l]}
 \Use{Multi-channel convolution for one spatial position and one output channel.}
 \Notes{$h_u,w_v$ denote stride-adjusted input positions inside the filter window.}
 
-\subsection{Convolution Parameter Count}
+\subsection{Convolution Parameter Count \textbf{[Derived]}}
 
 \FormulaName{Parameter count}
 \[
@@ -95,7 +95,7 @@ n_C^{[l]}.
 \]
 \Use{Convolution layer parameter count including bias.}
 
-\subsection{Padding Conventions}
+\subsection{Padding Conventions \textbf{[Derived]}}
 
 \begin{center}
 \begin{tabular}{lll}
@@ -109,7 +109,7 @@ Same, $s=1$ & $\displaystyle p=\frac{f-1}{2}$ & preserve spatial size \\
 \end{center}
 \Notes{Same padding requires suitable integer padding; for odd $f$, $p=(f-1)/2$.}
 
-\subsection{Pooling Output Size}
+\subsection{Pooling Output Size \textbf{[Derived]}}
 
 \FormulaName{Pooling spatial output size}
 \[
@@ -140,7 +140,7 @@ n_C^{[l]} = n_C^{[l-1]}.
 \]
 \Use{Pooling spatial output size.}
 
-\subsection{Pooling Operations}
+\subsection{Pooling Operations \textbf{[Core]}}
 
 \FormulaName{Max pooling}
 \[
@@ -160,7 +160,7 @@ A_{u,v,c}^{[l-1](i)}.
 \Use{Pooling over spatial regions.}
 \Notes{$\mathcal{R}_{h,w}$ is the pooling window for output position $(h,w)$.}
 
-\subsection{1x1 Convolution}
+\subsection{1x1 Convolution \textbf{[Optional]}}
 
 \FormulaName{Parameter count and channel projection}
 \[
@@ -179,7 +179,7 @@ A^{[l]}
 \]
 \Use{Channel projection / bottleneck convolution.}
 
-\subsection{Depthwise Separable Convolution}
+\subsection{Depthwise Separable Convolution \textbf{[Optional]}}
 
 \FormulaName{Standard convolution parameters}
 \[

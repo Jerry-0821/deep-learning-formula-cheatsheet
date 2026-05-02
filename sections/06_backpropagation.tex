@@ -1,6 +1,6 @@
 \section{Backpropagation}
 
-\subsection{Backward Pipeline}
+\subsection{Backward Pipeline \textbf{[Derived]}}
 
 \FormulaName{Dense-layer reverse flow}
 \[
@@ -8,7 +8,7 @@ dA^{[l]} \to dZ^{[l]} \to dW^{[l]}, db^{[l]} \to dA^{[l-1]}.
 \]
 \Use{Reverse-mode differentiation for dense layers.}
 
-\subsection{Output Layer Simplifications}
+\subsection{Output Layer Simplifications \textbf{[Core]}}
 
 \FormulaName{Sigmoid output with binary cross-entropy}
 \[
@@ -25,7 +25,7 @@ dZ^{[L]} = A^{[L]} - Y.
 \Use{Multi-class output-layer gradient.}
 \Notes{Same compact form, different output dimension.}
 
-\subsection{General Hidden-Layer Backpropagation}
+\subsection{General Hidden-Layer Backpropagation \textbf{[Core]}}
 
 \FormulaName{Activation gradient}
 \[
@@ -61,7 +61,7 @@ n^{[l-1]} \times m.
 \]
 \Use{Backpropagation dimension check.}
 
-\subsection{Parameter Gradients}
+\subsection{Parameter Gradients \textbf{[Derived]}}
 
 \FormulaName{Weight gradient}
 \[
@@ -98,7 +98,7 @@ n^{[l]} \times n^{[l-1]}.
 \]
 \Use{Parameter-gradient dimension check.}
 
-\subsection{Shape Check and Parameter Update Link}
+\subsection{Shape Check and Parameter Update Link \textbf{[Derived]}}
 
 \FormulaName{Basic gradient descent update}
 \[
@@ -138,7 +138,7 @@ $\operatorname{diff}$ & gradient-check discrepancy & scalar \\
 \end{tabular}
 \end{center}
 
-\subsection{Gradient Checking}
+\subsection{Gradient Checking \textbf{[Optional]}}
 
 \FormulaName{Numerical gradient approximation}
 \[

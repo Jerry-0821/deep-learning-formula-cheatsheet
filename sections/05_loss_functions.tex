@@ -1,6 +1,6 @@
 \section{Loss and Cost Functions}
 
-\subsection{Binary Cross-Entropy}
+\subsection{Binary Cross-Entropy \textbf{[Core]}}
 
 \FormulaName{Single-example binary loss}
 \[
@@ -24,7 +24,7 @@ y\log a + (1-y)\log(1-a)
 \Shapes{$A,Y \in \R^{1 \times m}$.}
 \Use{Average binary negative log-likelihood.}
 
-\subsection{Multiclass Cross-Entropy}
+\subsection{Multiclass Cross-Entropy \textbf{[Core]}}
 
 \FormulaName{Single-example multiclass loss}
 \[
@@ -44,7 +44,7 @@ y\log a + (1-y)\log(1-a)
 \Shapes{$c \in \{1,\dots,K\}$.}
 \Use{One-hot categorical target.}
 
-\subsection{Mean Squared Error}
+\subsection{Mean Squared Error \textbf{[Derived]}}
 
 \FormulaName{Single-example squared error}
 \[
@@ -68,7 +68,7 @@ y\log a + (1-y)\log(1-a)
 \Shapes{$\hat{Y},Y \in \R^{n_y \times m}$.}
 \Use{Average regression objective.}
 
-\subsection{Sequence Negative Log-Likelihood}
+\subsection{Sequence Negative Log-Likelihood \textbf{[Core]}}
 
 \FormulaName{Conditional sequence loss}
 \[
@@ -84,7 +84,7 @@ y^{\langle 1\rangle},\dots,y^{\langle t-1\rangle},x
 \Shapes{$t$ is a sequence time-step index; $T_y$ is output length.}
 \Use{Sequence modeling.}
 
-\subsection{Regularized Cost}
+\subsection{Regularized Cost \textbf{[Derived]}}
 
 \FormulaName{L2-regularized objective}
 \[
@@ -99,7 +99,7 @@ y^{\langle 1\rangle},\dots,y^{\langle t-1\rangle},x
 \Shapes{$W^{[l]} \in \R^{n^{[l]} \times n^{[l-1]}}$.}
 \Use{L2-regularized objective.}
 
-\subsection{Label Smoothing}
+\subsection{Label Smoothing \textbf{[Optional]}}
 
 \FormulaName{Smoothed target}
 \[
@@ -119,7 +119,7 @@ y_{\mathrm{smooth}}
 \Shapes{$y,y_{\mathrm{smooth}},\hat{y}\in\R^{K\times 1}$.}
 \Use{Regularizes over-confident predictions.}
 
-\subsection{Focal Loss}
+\subsection{Focal Loss \textbf{[Optional]}}
 
 \FormulaName{Focal loss}
 \[
