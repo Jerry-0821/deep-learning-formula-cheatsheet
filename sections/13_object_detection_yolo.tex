@@ -1,0 +1,108 @@
+\section{Object Detection and YOLO}
+
+\subsection{Bounding Box Representation}
+
+\FormulaName{Box parameterizations}
+\[
+b=(b_x,b_y,b_h,b_w),
+\qquad
+b=(x_{\min},y_{\min},x_{\max},y_{\max}).
+\]
+\Use{Bounding box coordinates.}
+\Notes{Use one representation consistently within a formula.}
+
+\subsection{Intersection over Union}
+
+\FormulaName{IoU}
+\[
+\operatorname{IoU}(B_1,B_2)
+=
+\frac{
+\operatorname{area}(B_1 \cap B_2)
+}{
+\operatorname{area}(B_1 \cup B_2)
+}.
+\]
+\Use{Bounding-box overlap score.}
+
+\subsection{YOLO Grid Output Shape}
+
+\FormulaName{Course-style YOLO output}
+\[
+S \times S \times (B \cdot 5 + C).
+\]
+\[
+\text{Batch output}
+\in
+\R^{m \times S \times S \times (B \cdot 5 + C)}.
+\]
+\[
+(p_c,b_x,b_y,b_h,b_w).
+\]
+\Use{YOLO grid-cell prediction tensor.}
+\Notes{Modern YOLO variants may use different head designs; deferred to V2.}
+
+\subsection{Objectness and Class Scores}
+
+\FormulaName{Class-specific confidence}
+\[
+p_c=P(\mathrm{object}),
+\qquad
+P(c_j \mid \mathrm{object}).
+\]
+\[
+\mathrm{score}_j
+=
+p_c\,P(c_j \mid \mathrm{object}).
+\]
+\Use{Class confidence score for detection.}
+
+\subsection{Anchor Boxes}
+
+\FormulaName{Anchor assignment}
+\[
+\text{anchor}
+=
+\argmax_{a}
+\operatorname{IoU}(B_{\mathrm{true}}, A_a).
+\]
+\Use{Assign ground-truth box to best matching anchor.}
+
+\subsection{Non-max Suppression}
+
+\FormulaName{Selection and suppression}
+\[
+B^*
+=
+\argmax_{B_i}
+\mathrm{score}(B_i).
+\]
+\[
+\operatorname{IoU}(B_i,B^*) > \tau
+\quad
+\Rightarrow
+\quad
+\text{discard } B_i.
+\]
+\Use{Remove duplicate boxes.}
+
+\subsection{Object Detection Symbol Table}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Symbol & Meaning & Shape / Type \\
+\midrule
+$S$ & grid size & $\mathbb{N}$ \\
+$B$ & boxes per grid cell & $\mathbb{N}$ \\
+$C$ & object classes & $\mathbb{N}$ \\
+$p_c$ & objectness probability & scalar \\
+$b_x,b_y,b_h,b_w$ & box center/size coordinates & scalars \\
+$B_i$ & predicted box & box \\
+$A_a$ & anchor box $a$ & box \\
+$\operatorname{IoU}$ & intersection over union & $[0,1]$ \\
+$\tau$ & NMS threshold & scalar \\
+$\mathrm{score}_j$ & class confidence score & scalar \\
+\bottomrule
+\end{tabular}
+\end{center}

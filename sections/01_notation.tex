@@ -1,0 +1,152 @@
+\section{Notation and Tensor Shapes}
+
+\FormulaName{Global convention}
+\[
+\begin{aligned}
+m &: \text{number of examples in a batch}, &
+L &: \text{number of layers},\\
+n_x &: \text{input dimension}, &
+n_y &: \text{output dimension},\\
+n^{[l]} &: \text{number of units in layer } l, &
+n^{[0]} &= n_x.
+\end{aligned}
+\]
+\Use{Column-wise batch notation.}
+\Notes{Example index: $(i)$. Layer index: $[l]$. Sequence index: $\langle t\rangle$. Mini-batch index: $\{k\}$.}
+
+\FormulaName{Batch matrices}
+\[
+X = A^{[0]} =
+\begin{bmatrix}
+| & | & & |\\
+x^{(1)} & x^{(2)} & \cdots & x^{(m)}\\
+| & | & & |
+\end{bmatrix}
+\in \R^{n_x \times m},
+\qquad
+Y \in \R^{n_y \times m}.
+\]
+\Shapes{$x^{(i)} \in \R^{n_x \times 1}$, $y^{(i)} \in \R^{n_y \times 1}$.}
+\Use{Vectorized training examples.}
+
+\FormulaName{Dense layer parameters}
+\[
+\begin{aligned}
+W^{[l]} &\in \R^{n^{[l]} \times n^{[l-1]}},\\
+b^{[l]} &\in \R^{n^{[l]} \times 1},\\
+Z^{[l]}, A^{[l]} &\in \R^{n^{[l]} \times m}.
+\end{aligned}
+\]
+\Use{Layer-wise shape contract.}
+\Notes{$b^{[l]}$ is broadcast across the $m$ batch columns.}
+
+\FormulaName{Dense layer forward pass}
+\[
+\begin{aligned}
+Z^{[l]} &= W^{[l]} A^{[l-1]} + b^{[l]},\\
+A^{[l]} &= g^{[l]}(Z^{[l]}).
+\end{aligned}
+\]
+\Shapes{
+$W^{[l]} A^{[l-1]}:
+(n^{[l]} \times n^{[l-1]})(n^{[l-1]} \times m)
+= n^{[l]} \times m$.
+}
+\Use{Default affine-activation block.}
+
+\FormulaName{Gradient shapes}
+\[
+\begin{aligned}
+dZ^{[l]}, dA^{[l]} &\in \R^{n^{[l]} \times m},\\
+dW^{[l]} &\in \R^{n^{[l]} \times n^{[l-1]}},\\
+db^{[l]} &\in \R^{n^{[l]} \times 1}.
+\end{aligned}
+\]
+\Use{Backpropagation dimension checks.}
+
+\FormulaName{Elementwise operations}
+\[
+U \hadamard V,\quad g(U),\quad \log U,\quad U^2
+\]
+\Shapes{All elementwise operands must be equal shape or broadcastable.}
+\Use{Activation, loss, dropout, and gates.}
+
+\FormulaName{Common vectors}
+\[
+\vect{1}_m \in \R^{1 \times m},
+\qquad
+\sum_{i=1}^{m} U_{:,i}
+= U \vect{1}_m\transpose.
+\]
+\Use{Batch sums and bias gradients.}
+
+\FormulaName{Mini-batch notation}
+\[
+X^{\{k\}} \in \R^{n_x \times m_k},
+\qquad
+Y^{\{k\}} \in \R^{n_y \times m_k}.
+\]
+\Use{Mini-batch $k$ with size $m_k$.}
+\Notes{Do not use $t$ for mini-batches; $t$ is reserved for sequence time steps and optimizer steps.}
+
+\FormulaName{CNN notation}
+\[
+\begin{aligned}
+H,W &: \text{spatial height and width},\\
+C &: \text{channels},\\
+f &: \text{filter size},\\
+p &: \text{padding},\\
+s &: \text{stride}.
+\end{aligned}
+\]
+\Shapes{Main convention: NHWC. Single image: $H \times W \times C$. Batch: $m \times H \times W \times C$.}
+\Use{CNN shape formulas.}
+\Notes{PyTorch commonly uses NCHW: $m \times C \times H \times W$. Keep mapping in the shape reference appendix.}
+
+\FormulaName{Sequence notation}
+\[
+x^{\langle t\rangle} \in \R^{n_x \times m},
+\qquad
+a^{\langle t\rangle} \in \R^{n_a \times m},
+\qquad
+\hat{y}^{\langle t\rangle} \in \R^{n_y \times m}.
+\]
+\Use{RNN, GRU, LSTM, and sequence models.}
+\Notes{$T_x$ is input length. $T_y$ is output length.}
+
+\FormulaName{Transformer notation}
+\[
+X \in \R^{T \times d_{\text{model}}},
+\qquad
+Q \in \R^{T_q \times d_k},
+\qquad
+K \in \R^{T_k \times d_k},
+\qquad
+V \in \R^{T_k \times d_v}.
+\]
+\Use{Self-attention and cross-attention.}
+\Notes{Section 18 starts with single-head notation, then adds batch and multi-head shape references.}
+
+\FormulaName{Transformer batch and head references}
+\[
+Q \in \R^{m \times T_q \times d_k},
+\qquad
+Q \in \R^{m \times h \times T_q \times d_k}.
+\]
+\Use{Batch and multi-head shape checks.}
+\Notes{The same batch/head convention applies to $K$ and $V$ with their sequence and value dimensions.}
+
+\FormulaName{Probability notation}
+\[
+\hat{y}^{(i)} = P(y=1 \given x^{(i)}),
+\qquad
+\hat{y}^{(i)}_k = P(y=k \given x^{(i)}).
+\]
+\Use{Binary and multiclass outputs.}
+
+\FormulaName{Parameter update notation}
+\[
+\theta \leftarrow \theta - \alpha d\theta.
+\]
+\Shapes{$\theta$ and $d\theta$ have identical shape.}
+\Use{Generic first-order update rule.}

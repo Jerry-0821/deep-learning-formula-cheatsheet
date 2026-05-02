@@ -1,0 +1,204 @@
+\section{Convolutional Neural Networks}
+
+\subsection{CNN Tensor Convention}
+
+\FormulaName{NHWC activations}
+\[
+A^{[l-1]}
+\in
+\R^{m \times n_H^{[l-1]} \times n_W^{[l-1]} \times n_C^{[l-1]}},
+\qquad
+A^{[l]}
+\in
+\R^{m \times n_H^{[l]} \times n_W^{[l]} \times n_C^{[l]}}.
+\]
+\Use{CNN batch tensor convention.}
+\Notes{$n_C^{[l]}$ equals the number of filters in layer $l$.}
+
+\subsection{Convolution Output Size}
+
+\FormulaName{Spatial output size}
+\[
+n_H^{[l]}
+=
+\left\lfloor
+\frac{
+n_H^{[l-1]} + 2p^{[l]} - f^{[l]}
+}{
+s^{[l]}
+}
+\right\rfloor
++1.
+\]
+\[
+n_W^{[l]}
+=
+\left\lfloor
+\frac{
+n_W^{[l-1]} + 2p^{[l]} - f^{[l]}
+}{
+s^{[l]}
+}
+\right\rfloor
++1.
+\]
+\[
+n_C^{[l]}=\text{number of filters},
+\qquad
+A^{[l]}
+\in
+\R^{m \times n_H^{[l]} \times n_W^{[l]} \times n_C^{[l]}}.
+\]
+\Use{Convolution spatial output size.}
+
+\subsection{Multi-channel Convolution}
+
+\FormulaName{One output position and channel}
+\[
+Z_{h,w,k}^{[l](i)}
+=
+\sum_{u=1}^{f^{[l]}}
+\sum_{v=1}^{f^{[l]}}
+\sum_{c=1}^{n_C^{[l-1]}}
+A_{h_u,w_v,c}^{[l-1](i)}
+W_{u,v,c,k}^{[l]}
++
+b_k^{[l]}.
+\]
+\[
+W^{[l]}
+\in
+\R^{f^{[l]} \times f^{[l]} \times n_C^{[l-1]} \times n_C^{[l]}},
+\qquad
+b^{[l]}
+\in
+\R^{1 \times 1 \times 1 \times n_C^{[l]}}.
+\]
+\Use{Multi-channel convolution for one spatial position and one output channel.}
+\Notes{$h_u,w_v$ denote input spatial positions selected by the filter window.}
+
+\subsection{Convolution Parameter Count}
+
+\FormulaName{Parameter count}
+\[
+\#\mathrm{params}_{\mathrm{per\ filter}}
+=
+f^{[l]} f^{[l]} n_C^{[l-1]} + 1.
+\]
+\[
+\#\mathrm{params}_{\mathrm{layer}}
+=
+\left(
+f^{[l]} f^{[l]} n_C^{[l-1]} + 1
+\right)
+n_C^{[l]}.
+\]
+\Use{Convolution layer parameter count including bias.}
+
+\subsection{Padding Conventions}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Convention & Formula & Use \\
+\midrule
+Valid & $p=0$ & no padding \\
+Same, $s=1$ & $\displaystyle p=\frac{f-1}{2}$ & preserve spatial size \\
+\bottomrule
+\end{tabular}
+\end{center}
+\Notes{Same padding requires suitable integer padding; for odd $f$, $p=(f-1)/2$.}
+
+\subsection{Pooling Output Size}
+
+\FormulaName{Pooling spatial output size}
+\[
+n_H^{[l]}
+=
+\left\lfloor
+\frac{
+n_H^{[l-1]} - f
+}{
+s
+}
+\right\rfloor
++1,
+\qquad
+n_W^{[l]}
+=
+\left\lfloor
+\frac{
+n_W^{[l-1]} - f
+}{
+s
+}
+\right\rfloor
++1.
+\]
+\[
+n_C^{[l]} = n_C^{[l-1]}.
+\]
+\Use{Pooling spatial output size.}
+
+\subsection{Pooling Operations}
+
+\FormulaName{Max pooling}
+\[
+A_{h,w,c}^{[l](i)}
+=
+\max_{(u,v)\in \mathcal{R}_{h,w}}
+A_{u,v,c}^{[l-1](i)}.
+\]
+\FormulaName{Average pooling}
+\[
+A_{h,w,c}^{[l](i)}
+=
+\frac{1}{|\mathcal{R}_{h,w}|}
+\sum_{(u,v)\in \mathcal{R}_{h,w}}
+A_{u,v,c}^{[l-1](i)}.
+\]
+\Use{Pooling over spatial regions.}
+\Notes{$\mathcal{R}_{h,w}$ is the pooling window for output position $(h,w)$.}
+
+\subsection{1x1 Convolution}
+
+\FormulaName{Parameter count and channel projection}
+\[
+\#\mathrm{params}
+=
+(1 \cdot 1 \cdot n_C^{[l-1]} + 1)n_C^{[l]}.
+\]
+\[
+A^{[l-1]}
+\in
+\R^{m \times n_H \times n_W \times n_C^{[l-1]}}
+\to
+A^{[l]}
+\in
+\R^{m \times n_H \times n_W \times n_C^{[l]}}.
+\]
+\Use{Channel projection / bottleneck convolution.}
+
+\subsection{CNN Symbol Table}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Symbol & Meaning & Shape / Type \\
+\midrule
+$A^{[l-1]}$ & input activation & $\R^{m \times n_H^{[l-1]} \times n_W^{[l-1]} \times n_C^{[l-1]}}$ \\
+$A^{[l]}$ & output activation & $\R^{m \times n_H^{[l]} \times n_W^{[l]} \times n_C^{[l]}}$ \\
+$Z^{[l]}$ & convolution pre-activation & $\R^{m \times n_H^{[l]} \times n_W^{[l]} \times n_C^{[l]}}$ \\
+$W^{[l]}$ & convolution filters & $\R^{f^{[l]} \times f^{[l]} \times n_C^{[l-1]} \times n_C^{[l]}}$ \\
+$b^{[l]}$ & convolution bias & $\R^{1 \times 1 \times 1 \times n_C^{[l]}}$ \\
+$m$ & batch size & $\mathbb{N}$ \\
+$n_H^{[l]}$ & height at layer $l$ & $\mathbb{N}$ \\
+$n_W^{[l]}$ & width at layer $l$ & $\mathbb{N}$ \\
+$n_C^{[l]}$ & channels / filters at layer $l$ & $\mathbb{N}$ \\
+$f^{[l]}$ & filter size & $\mathbb{N}$ \\
+$p^{[l]}$ & padding & $\mathbb{N}_0$ \\
+$s^{[l]}$ & stride & $\mathbb{N}$ \\
+$\mathcal{R}_{h,w}$ & pooling window & spatial index set \\
+\bottomrule
+\end{tabular}
+\end{center}

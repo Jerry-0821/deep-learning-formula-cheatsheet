@@ -1,0 +1,35 @@
+name: Build PDF
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-pdf:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Compile LaTeX document
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main.tex
+          latexmk_use_xelatex: false
+
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: deep-learning-formula-cheatsheet-pdf
+          path: main.pdf
+          if-no-files-found: error
+
+      - name: Upload LaTeX build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: latex-build-log
+          path: main.log
+          if-no-files-found: warn

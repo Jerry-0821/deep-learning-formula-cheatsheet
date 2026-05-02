@@ -1,0 +1,118 @@
+\section{Activation Functions}
+
+\subsection{Elementwise Hidden Activations}
+
+\begin{center}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.17\linewidth}
+                >{\raggedright\arraybackslash}p{0.26\linewidth}
+                >{\raggedright\arraybackslash}p{0.23\linewidth}
+                >{\raggedright\arraybackslash}p{0.10\linewidth}
+                >{\raggedright\arraybackslash}p{0.12\linewidth}}
+\toprule
+Activation & Formula & Derivative & Range & Common use \\
+\midrule
+Sigmoid &
+\(\displaystyle \sigmoid(z)=\frac{1}{1+e^{-z}}\) &
+\(\displaystyle \sigmoid'(z)=\sigmoid(z)(1-\sigmoid(z))\) &
+\((0,1)\) &
+Gate / binary output \\
+\addlinespace
+Tanh &
+\(\displaystyle \tanh(z)=\frac{e^z-e^{-z}}{e^z+e^{-z}}\) &
+\(\displaystyle \frac{d}{dz}\tanh(z)=1-\tanh^2(z)\) &
+\((-1,1)\) &
+Hidden state \\
+\addlinespace
+ReLU &
+\(\displaystyle \relu(z)=\max(0,z)\) &
+\(\displaystyle \relu'(z)=
+\begin{cases}
+1, & z>0\\
+0, & z<0
+\end{cases}\) &
+\([0,\infty)\) &
+Hidden layer \\
+\addlinespace
+Leaky ReLU &
+\(\displaystyle \operatorname{LeakyReLU}(z)=\max(\lambda_{\mathrm{leak}}z,z)\) &
+\(\displaystyle \operatorname{LeakyReLU}'(z)=
+\begin{cases}
+1, & z>0\\
+\lambda_{\mathrm{leak}}, & z<0
+\end{cases}\) &
+\(\R\) &
+Hidden layer \\
+\bottomrule
+\end{tabular}
+\end{center}
+\Use{Elementwise hidden-layer nonlinearities.}
+\Notes{Derivatives at nondifferentiable points are implementation conventions.}
+
+\subsection{Output Activations}
+
+\begin{center}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.18\linewidth}
+                >{\raggedright\arraybackslash}p{0.36\linewidth}
+                >{\raggedright\arraybackslash}p{0.24\linewidth}
+                >{\raggedright\arraybackslash}p{0.12\linewidth}}
+\toprule
+Activation & Formula & Constraint & Common use \\
+\midrule
+Sigmoid &
+\(\displaystyle a=\sigmoid(z)\) &
+\(a=P(y=1\given x)\) &
+Binary \\
+\addlinespace
+Softmax &
+\(\displaystyle \softmax(z)_k =
+\frac{e^{z_k}}{\sum_{j=1}^{K}e^{z_j}}\) &
+\(\displaystyle a_k=P(y=k\given x),\quad \sum_{k=1}^{K}a_k=1\) &
+Multi-class \\
+\addlinespace
+Linear &
+\(\displaystyle a=z\) &
+\(a \in \R^{n_y}\) &
+Regression \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Derivative Table}
+
+\FormulaName{Softmax Jacobian}
+\[
+\frac{\partial a_i}{\partial z_j}
+=
+a_i(\delta_{ij}-a_j).
+\]
+\Shapes{$z,a \in \R^{K \times 1}$ for one example.}
+\Use{Softmax derivative reference.}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Symbol & Meaning & Shape / domain \\
+\midrule
+$z$ & scalar pre-activation or logit vector & $\R$ or $\R^{K \times 1}$ \\
+$a$ & activation output & same leading shape as $z$ \\
+$K$ & number of classes & $\mathbb{N}$ \\
+$\delta_{ij}$ & Kronecker delta & $\{0,1\}$ \\
+$\lambda_{\mathrm{leak}}$ & leaky ReLU slope & $0 < \lambda_{\mathrm{leak}} < 1$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Common Output-Loss Simplifications}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Output activation & Loss & Logit gradient \\
+\midrule
+Sigmoid & Binary cross-entropy & $dZ=A-Y$ \\
+Softmax & Categorical cross-entropy & $dZ=A-Y$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\Shapes{$A,Y,dZ$ share the output-layer batch shape.}
+\Use{Output-layer backpropagation shortcut.}

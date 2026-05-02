@@ -1,0 +1,214 @@
+\section{Shape Reference Tables}
+
+\subsection{Dense Layer Shapes}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Quantity & Shape \\
+\midrule
+$X=A^{[0]}$ & $n_x \times m$ \\
+$A^{[l-1]}$ & $n^{[l-1]} \times m$ \\
+$W^{[l]}$ & $n^{[l]} \times n^{[l-1]}$ \\
+$b^{[l]}$ & $n^{[l]} \times 1$ \\
+$Z^{[l]},A^{[l]}$ & $n^{[l]} \times m$ \\
+$Y$ & $n_y \times m$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Logistic Regression Shapes}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Quantity & Shape \\
+\midrule
+$x^{(i)}$ & $n_x \times 1$ \\
+$X$ & $n_x \times m$ \\
+$w$ & $n_x \times 1$ \\
+$b$ & $\R$ \\
+$Z,A,Y$ & $1 \times m$ \\
+$dZ$ & $1 \times m$ \\
+$dw$ & $n_x \times 1$ \\
+$db$ & $\R$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Backpropagation Shapes}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Quantity & Shape \\
+\midrule
+$dA^{[l]}$ & $n^{[l]} \times m$ \\
+$dZ^{[l]}$ & $n^{[l]} \times m$ \\
+$dW^{[l]}$ & $n^{[l]} \times n^{[l-1]}$ \\
+$db^{[l]}$ & $n^{[l]} \times 1$ \\
+$dA^{[l-1]}$ & $n^{[l-1]} \times m$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Optimizer Accumulator Shapes}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Quantity & Shape \\
+\midrule
+$u_{dW^{[l]},t}$ & $n^{[l]} \times n^{[l-1]}$ \\
+$u_{db^{[l]},t}$ & $n^{[l]} \times 1$ \\
+$s_{dW^{[l]},t}$ & $n^{[l]} \times n^{[l-1]}$ \\
+$s_{db^{[l]},t}$ & $n^{[l]} \times 1$ \\
+$m_{dW^{[l]},t},v_{dW^{[l]},t}$ & $n^{[l]} \times n^{[l-1]}$ \\
+$m_{db^{[l]},t},v_{db^{[l]},t}$ & $n^{[l]} \times 1$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\Use{Momentum, RMSProp, and Adam accumulator shapes.}
+
+\subsection{CNN Shapes}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Quantity & Shape / Formula \\
+\midrule
+$A^{[l-1]}$ & $m \times n_H^{[l-1]} \times n_W^{[l-1]} \times n_C^{[l-1]}$ \\
+$W^{[l]}$ & $f^{[l]} \times f^{[l]} \times n_C^{[l-1]} \times n_C^{[l]}$ \\
+$b^{[l]}$ & $1 \times 1 \times 1 \times n_C^{[l]}$ \\
+$A^{[l]}$ & $m \times n_H^{[l]} \times n_W^{[l]} \times n_C^{[l]}$ \\
+$n_H^{[l]}$ & $\left\lfloor\frac{n_H^{[l-1]}+2p^{[l]}-f^{[l]}}{s^{[l]}}\right\rfloor+1$ \\
+$n_W^{[l]}$ & $\left\lfloor\frac{n_W^{[l-1]}+2p^{[l]}-f^{[l]}}{s^{[l]}}\right\rfloor+1$ \\
+Pooling output & $m \times n_H^{[l]} \times n_W^{[l]} \times n_C^{[l-1]}$ \\
+Pooling channels & $n_C^{[l]}=n_C^{[l-1]}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\Use{NHWC CNN shape convention.}
+
+\subsection{RNN / GRU / LSTM Shapes}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Quantity & Shape \\
+\midrule
+$x^{\langle t\rangle}$ & $n_x \times m$ \\
+$a^{\langle t\rangle}$ & $n_a \times m$ \\
+$c^{\langle t\rangle}$ & $n_a \times m$ \\
+$\hat{y}^{\langle t\rangle}$ & $n_y \times m$ \\
+$W_a$ & $n_a \times (n_a+n_x)$ \\
+$b_a$ & $n_a \times 1$ \\
+$W_y$ & $n_y \times n_a$ \\
+$b_y$ & $n_y \times 1$ \\
+$W_u,W_r,W_{\tilde{c}}$ (GRU) & $n_a \times (n_a+n_x)$ \\
+$b_u,b_r,b_{\tilde{c}}$ (GRU) & $n_a \times 1$ \\
+$W_f,W_i,W_{\tilde{c}},W_o$ (LSTM) & $n_a \times (n_a+n_x)$ \\
+$b_f,b_i,b_{\tilde{c}},b_o$ (LSTM) & $n_a \times 1$ \\
+$a_{\mathrm{bi}}^{\langle t\rangle}$ & $2n_a \times m$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Embedding and Language Model Shapes}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Quantity & Shape \\
+\midrule
+$o_w$ & $\lvert V\rvert \times 1$ \\
+$O^{\langle t\rangle}$ & $\lvert V\rvert \times m$ \\
+$E$ & $d_e \times \lvert V\rvert$ \\
+$e_w$ & $d_e \times 1$ \\
+$E^{\langle t\rangle}$ & $d_e \times m$ \\
+$a^{\langle t\rangle}$ & $n_a \times m$ \\
+$W_o$ & $\lvert V\rvert \times n_a$ \\
+$b_o$ & $\lvert V\rvert \times 1$ \\
+$z^{\langle t\rangle},\hat{y}^{\langle t\rangle}$ & $\lvert V\rvert \times m$ \\
+$E_{\mathrm{row}}$ & $\lvert V\rvert \times d_e$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Attention and Seq2Seq Shapes}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Quantity & Shape \\
+\midrule
+$a^{\langle t'\rangle}$ & $n_a \times m$ \\
+$s^{\langle t\rangle}$ & $n_s \times m$ \\
+$e^{\langle t,t'\rangle}$ & $1 \times m$ \\
+$\alpha^{\langle t,t'\rangle}$ & $1 \times m$ \\
+$c^{\langle t\rangle}$ & $n_a \times m$ \\
+$W_s$ & $n_e \times n_s$ \\
+$W_a$ & $n_e \times n_a$ \\
+$v_a$ & $n_e \times 1$ \\
+$\hat{y}^{\langle t\rangle}$ & $n_y \times m$ \\
+$W_y$ & $n_y \times n_s$ \\
+$b_y$ & $n_y \times 1$ \\
+$W_o$ & $n_y \times (n_s+n_a)$ \\
+$b_o$ & $n_y \times 1$ \\
+$\begin{bmatrix}s^{\langle t\rangle}\\ c^{\langle t\rangle}\end{bmatrix}$ & $(n_s+n_a)\times m$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Transformer Shapes}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Quantity & Shape \\
+\midrule
+$X$ & $T \times d_{\mathrm{model}}$ \\
+$Q,K$ & $T \times d_k$ \\
+$V$ & $T \times d_v$ \\
+$X_{\mathrm{dec}}$ & $T_q \times d_{\mathrm{model}}$ \\
+$X_{\mathrm{enc}}$ & $T_k \times d_{\mathrm{model}}$ \\
+$Q$ & $T_q \times d_k$ \\
+$K$ & $T_k \times d_k$ \\
+$V$ & $T_k \times d_v$ \\
+$S,P$ & $T_q \times T_k$ \\
+$O$ & $T_q \times d_v$ \\
+$\operatorname{head}_r$ & $T \times d_v$ \\
+$H$ & $T \times (h d_v)$ \\
+$W_O$ & $h d_v \times d_{\mathrm{model}}$ \\
+$\operatorname{MHA}(X)$ & $T \times d_{\mathrm{model}}$ \\
+$W_1$ & $d_{\mathrm{model}} \times d_{\mathrm{ff}}$ \\
+$W_2$ & $d_{\mathrm{ff}} \times d_{\mathrm{model}}$ \\
+$\mathbf{1}$ & $T \times 1$ \\
+$\mathbf{1}b_1\transpose$ & $T \times d_{\mathrm{ff}}$ \\
+$\mathbf{1}b_2\transpose$ & $T \times d_{\mathrm{model}}$ \\
+$Q$ (batch) & $m \times T_q \times d_k$ \\
+$K$ (batch) & $m \times T_k \times d_k$ \\
+$V$ (batch) & $m \times T_k \times d_v$ \\
+$Q$ (multi-head batch) & $m \times h \times T_q \times d_k$ \\
+$K$ (multi-head batch) & $m \times h \times T_k \times d_k$ \\
+$V$ (multi-head batch) & $m \times h \times T_k \times d_v$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Framework Layout Mapping}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Convention & Shape \\
+\midrule
+Course dense formula & $X_{\mathrm{dense}}\in\R^{n_x \times m}$ \\
+CNN NHWC & $X_{\mathrm{CNN}}\in\R^{m \times H \times W \times C}$ \\
+PyTorch CNN NCHW & $X_{\mathrm{CNN}}\in\R^{m \times C \times H \times W}$ \\
+Transformer batch-first & $X_{\mathrm{Transformer}}\in\R^{m \times T \times d_{\mathrm{model}}}$ \\
+Transformer formula-first & $X_{\mathrm{Transformer}}\in\R^{T \times d_{\mathrm{model}}}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\Use{Framework layout mapping.}

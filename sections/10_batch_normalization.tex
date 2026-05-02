@@ -1,0 +1,212 @@
+\section{Batch Normalization}
+
+\subsection{Mini-batch Statistics}
+
+\FormulaName{Mini-batch mean}
+\[
+\mu_B^{[l]}
+=
+\frac{1}{m}
+\sum_{i=1}^{m}
+z^{[l](i)}.
+\]
+\FormulaName{Mini-batch variance}
+\[
+(\sigma_B^{2})^{[l]}
+=
+\frac{1}{m}
+\sum_{i=1}^{m}
+\left(
+z^{[l](i)}-\mu_B^{[l]}
+\right)^{\odot 2}.
+\]
+\Shapes{$\mu_B^{[l]},(\sigma_B^2)^{[l]} \in \R^{n^{[l]} \times 1}$.}
+\Use{Mini-batch mean and variance.}
+
+\subsection{Normalize}
+
+\FormulaName{Single-example normalization}
+\[
+\widehat{z}^{[l](i)}
+=
+\frac{
+z^{[l](i)}-\mu_B^{[l]}
+}{
+\sqrt{(\sigma_B^2)^{[l]}+\epsilon}
+}.
+\]
+\Shapes{$z^{[l](i)},\widehat{z}^{[l](i)} \in \R^{n^{[l]} \times 1}$.}
+
+\FormulaName{Vectorized normalization}
+\[
+\widehat{Z}^{[l]}
+=
+\frac{
+Z^{[l]}-\mu_B^{[l]}
+}{
+\sqrt{(\sigma_B^2)^{[l]}+\epsilon}
+}.
+\]
+\Shapes{$Z^{[l]},\widehat{Z}^{[l]} \in \R^{n^{[l]} \times m}$.}
+\Use{Normalize dense-layer pre-activations.}
+\Notes{Subtraction and division broadcast across the batch axis. Square root and division are elementwise.}
+
+\subsection{Scale and Shift}
+
+\FormulaName{Single-example scale and shift}
+\[
+\widetilde{z}^{[l](i)}
+=
+\gamma^{[l]}
+\hadamard
+\widehat{z}^{[l](i)}
++
+\beta^{[l]}.
+\]
+\FormulaName{Vectorized scale and shift}
+\[
+\widetilde{Z}^{[l]}
+=
+\gamma^{[l]}
+\hadamard
+\widehat{Z}^{[l]}
++
+\beta^{[l]}.
+\]
+\[
+\gamma^{[l]}, \beta^{[l]}
+\in
+\R^{n^{[l]} \times 1},
+\qquad
+\widehat{Z}^{[l]}, \widetilde{Z}^{[l]}
+\in
+\R^{n^{[l]} \times m}.
+\]
+\Use{Learnable scale and shift after normalization.}
+
+\subsection{BatchNorm Forward Pipeline}
+
+\FormulaName{Dense-layer BatchNorm pipeline}
+\[
+Z^{[l]}
+\to
+\mu_B^{[l]}, (\sigma_B^2)^{[l]}
+\to
+\widehat{Z}^{[l]}
+\to
+\widetilde{Z}^{[l]}
+\to
+A^{[l]} = g^{[l]}(\widetilde{Z}^{[l]}).
+\]
+\Use{Dense-layer BatchNorm forward pass.}
+
+\subsection{Running Mean and Variance}
+
+\FormulaName{Running estimates}
+\[
+\mu_{\mathrm{run}}^{[l]}
+\leftarrow
+\rho \mu_{\mathrm{run}}^{[l]}
++
+(1-\rho)\mu_B^{[l]}.
+\]
+\[
+(\sigma_{\mathrm{run}}^2)^{[l]}
+\leftarrow
+\rho(\sigma_{\mathrm{run}}^2)^{[l]}
++
+(1-\rho)(\sigma_B^2)^{[l]}.
+\]
+\Shapes{$\mu_{\mathrm{run}}^{[l]},(\sigma_{\mathrm{run}}^2)^{[l]} \in \R^{n^{[l]} \times 1}$.}
+\Use{Maintain population estimates for inference.}
+
+\subsection{Training vs Inference}
+
+\FormulaName{Training normalization}
+\[
+\widehat{Z}_{\mathrm{train}}^{[l]}
+=
+\frac{
+Z^{[l]}-\mu_B^{[l]}
+}{
+\sqrt{(\sigma_B^2)^{[l]}+\epsilon}
+}.
+\]
+\FormulaName{Training scale and shift}
+\[
+\widetilde{Z}_{\mathrm{train}}^{[l]}
+=
+\gamma^{[l]}
+\hadamard
+\widehat{Z}_{\mathrm{train}}^{[l]}
++
+\beta^{[l]}.
+\]
+\FormulaName{Inference normalization}
+\[
+\widehat{Z}_{\mathrm{test}}^{[l]}
+=
+\frac{
+Z^{[l]}-\mu_{\mathrm{run}}^{[l]}
+}{
+\sqrt{(\sigma_{\mathrm{run}}^2)^{[l]}+\epsilon}
+}.
+\]
+\FormulaName{Inference scale and shift}
+\[
+\widetilde{Z}_{\mathrm{test}}^{[l]}
+=
+\gamma^{[l]}
+\hadamard
+\widehat{Z}_{\mathrm{test}}^{[l]}
++
+\beta^{[l]}.
+\]
+\Use{Batch statistics during training; running statistics during inference.}
+\Notes{Train/test subscripts have the same shape as $\widehat{Z}^{[l]}$ and $\widetilde{Z}^{[l]}$.}
+
+\subsection{Parameter Shapes}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Quantity & Shape \\
+\midrule
+$Z^{[l]}$ & $\R^{n^{[l]} \times m}$ \\
+$z^{[l](i)}$ & $\R^{n^{[l]} \times 1}$ \\
+$\mu_B^{[l]}$ & $\R^{n^{[l]} \times 1}$ \\
+$(\sigma_B^2)^{[l]}$ & $\R^{n^{[l]} \times 1}$ \\
+$\widehat{Z}^{[l]}$ & $\R^{n^{[l]} \times m}$ \\
+$\widetilde{Z}^{[l]}$ & $\R^{n^{[l]} \times m}$ \\
+$\gamma^{[l]}$ & $\R^{n^{[l]} \times 1}$ \\
+$\beta^{[l]}$ & $\R^{n^{[l]} \times 1}$ \\
+$\mu_{\mathrm{run}}^{[l]}$ & $\R^{n^{[l]} \times 1}$ \\
+$(\sigma_{\mathrm{run}}^2)^{[l]}$ & $\R^{n^{[l]} \times 1}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{BatchNorm Symbol Table}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Symbol & Meaning & Shape / Type \\
+\midrule
+$Z^{[l]}$ & pre-activation batch & $\R^{n^{[l]} \times m}$ \\
+$z^{[l](i)}$ & single pre-activation column & $\R^{n^{[l]} \times 1}$ \\
+$\mu_B^{[l]}$ & mini-batch mean & $\R^{n^{[l]} \times 1}$ \\
+$(\sigma_B^2)^{[l]}$ & mini-batch variance & $\R^{n^{[l]} \times 1}$ \\
+$\widehat{Z}^{[l]}$ & normalized pre-activation & $\R^{n^{[l]} \times m}$ \\
+$\widetilde{Z}^{[l]}$ & scaled and shifted pre-activation & $\R^{n^{[l]} \times m}$ \\
+$\gamma^{[l]}$ & scale parameter & $\R^{n^{[l]} \times 1}$ \\
+$\beta^{[l]}$ & shift parameter & $\R^{n^{[l]} \times 1}$ \\
+$\epsilon$ & denominator stabilizer & small scalar \\
+$\rho$ & running-average coefficient & scalar in $[0,1)$ \\
+$\mu_{\mathrm{run}}^{[l]}$ & running mean & $\R^{n^{[l]} \times 1}$ \\
+$(\sigma_{\mathrm{run}}^2)^{[l]}$ & running variance & $\R^{n^{[l]} \times 1}$ \\
+$m$ & batch size & $\mathbb{N}$ \\
+$g^{[l]}$ & activation function & layer map \\
+\bottomrule
+\end{tabular}
+\end{center}

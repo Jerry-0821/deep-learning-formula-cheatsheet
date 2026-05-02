@@ -1,0 +1,504 @@
+\section{RNN / GRU / LSTM}
+
+\subsection{Sequence Tensor Convention}
+
+\FormulaName{Sequence tensors}
+\[
+x^{\langle t\rangle}
+\in
+\R^{n_x \times m},
+\qquad
+a^{\langle t\rangle}
+\in
+\R^{n_a \times m},
+\qquad
+\hat{y}^{\langle t\rangle}
+\in
+\R^{n_y \times m}.
+\]
+\[
+c^{\langle t\rangle}
+\in
+\R^{n_a \times m}.
+\]
+\[
+t=1,\dots,T_x
+\quad\text{for input sequence steps}.
+\]
+\[
+t=1,\dots,T_y
+\quad\text{for output sequence steps}.
+\]
+\Use{Sequence-model tensor convention.}
+\Notes{$a^{\langle 0\rangle}$ and $c^{\langle 0\rangle}$ are initial states.}
+
+\subsection{Vanilla RNN Forward Pass}
+
+\FormulaName{Concatenated input}
+\[
+\begin{bmatrix}
+a^{\langle t-1\rangle}\\
+x^{\langle t\rangle}
+\end{bmatrix}
+\in
+\R^{(n_a+n_x)\times m}.
+\]
+\Use{RNN state/input stack.}
+
+\FormulaName{Hidden-state update}
+\[
+a^{\langle t\rangle}
+=
+\tanh
+\left(
+W_a
+\begin{bmatrix}
+a^{\langle t-1\rangle}\\
+x^{\langle t\rangle}
+\end{bmatrix}
++
+b_a
+\right).
+\]
+\[
+W_a
+\in
+\R^{n_a \times (n_a+n_x)},
+\qquad
+b_a
+\in
+\R^{n_a \times 1},
+\qquad
+a^{\langle t\rangle}
+\in
+\R^{n_a \times m}.
+\]
+\Use{Vanilla RNN hidden-state update.}
+
+\FormulaName{Equivalent split form}
+\[
+a^{\langle t\rangle}
+=
+\tanh
+\left(
+W_{aa}a^{\langle t-1\rangle}
++
+W_{ax}x^{\langle t\rangle}
++
+b_a
+\right).
+\]
+\[
+W_{aa}\in\R^{n_a\times n_a},
+\qquad
+W_{ax}\in\R^{n_a\times n_x}.
+\]
+\Use{Split recurrent/input weights.}
+
+\subsection{RNN Output Prediction}
+
+\FormulaName{Output layer}
+\[
+z_y^{\langle t\rangle}
+=
+W_y a^{\langle t\rangle}
++
+b_y.
+\]
+\[
+\hat{y}^{\langle t\rangle}
+=
+g_y
+\left(
+z_y^{\langle t\rangle}
+\right).
+\]
+\[
+g_y=\softmax
+\quad\text{or}\quad
+g_y=\sigmoid.
+\]
+\[
+W_y \in \R^{n_y \times n_a},
+\qquad
+b_y \in \R^{n_y \times 1},
+\qquad
+z_y^{\langle t\rangle},
+\hat{y}^{\langle t\rangle}
+\in
+\R^{n_y \times m}.
+\]
+\Use{RNN output layer.}
+
+\subsection{Sequence Loss}
+
+\FormulaName{Sequence loss}
+\[
+\loss
+=
+\sum_{\tau=1}^{T_y}
+\loss^{\langle \tau\rangle}.
+\]
+\FormulaName{Categorical sequence loss}
+\[
+\loss
+=
+-\sum_{\tau=1}^{T_y}
+\sum_{k=1}^{n_y}
+y_k^{\langle \tau\rangle}
+\log
+\hat{y}_k^{\langle \tau\rangle}.
+\]
+\FormulaName{Batch average}
+\[
+\cost
+=
+\frac{1}{m}
+\sum_{i=1}^{m}
+\sum_{\tau=1}^{T_y}
+\loss^{\langle \tau\rangle(i)}.
+\]
+\Use{Sequence prediction objective.}
+
+\subsection{Backpropagation Through Time Label}
+
+\FormulaName{Time-summed parameter gradient}
+\[
+\frac{\partial \cost}{\partial W_a}
+=
+\sum_{\tau=1}^{T_x}
+\left.
+\frac{\partial \cost}{\partial W_a}
+\right|_{\langle \tau\rangle}.
+\]
+\FormulaName{Future-state dependency}
+\[
+a^{\langle t\rangle}
+\to
+a^{\langle t+1\rangle}
+\to
+\cdots
+\to
+\cost.
+\]
+\Use{BPTT gradient accumulation over time.}
+
+\subsection{GRU Forward Pass}
+
+\FormulaName{GRU state}
+\[
+c^{\langle t\rangle}
+\in
+\R^{n_a \times m}.
+\]
+\Use{GRU memory / hidden state.}
+
+\FormulaName{GRU gates}
+\[
+\Gamma_u^{\langle t\rangle}
+=
+\sigmoid
+\left(
+W_u
+\begin{bmatrix}
+c^{\langle t-1\rangle}\\
+x^{\langle t\rangle}
+\end{bmatrix}
++
+b_u
+\right).
+\]
+\[
+\Gamma_r^{\langle t\rangle}
+=
+\sigmoid
+\left(
+W_r
+\begin{bmatrix}
+c^{\langle t-1\rangle}\\
+x^{\langle t\rangle}
+\end{bmatrix}
++
+b_r
+\right).
+\]
+\FormulaName{Candidate memory}
+\[
+\widetilde{c}^{\langle t\rangle}
+=
+\tanh
+\left(
+W_{\tilde{c}}
+\begin{bmatrix}
+\Gamma_r^{\langle t\rangle}
+\hadamard
+c^{\langle t-1\rangle}\\
+x^{\langle t\rangle}
+\end{bmatrix}
++
+b_{\tilde{c}}
+\right).
+\]
+\FormulaName{Memory update}
+\[
+c^{\langle t\rangle}
+=
+\Gamma_u^{\langle t\rangle}
+\hadamard
+\widetilde{c}^{\langle t\rangle}
++
+\left(
+1-\Gamma_u^{\langle t\rangle}
+\right)
+\hadamard
+c^{\langle t-1\rangle}.
+\]
+\[
+\Gamma_u^{\langle t\rangle},
+\Gamma_r^{\langle t\rangle},
+\widetilde{c}^{\langle t\rangle},
+c^{\langle t\rangle}
+\in
+\R^{n_a \times m}.
+\]
+\[
+W_u,W_r,W_{\tilde{c}}
+\in
+\R^{n_a \times (n_a+n_x)},
+\qquad
+b_u,b_r,b_{\tilde{c}}
+\in
+\R^{n_a \times 1}.
+\]
+\Use{GRU gated memory update.}
+\Notes{In the GRU block, $W_{\tilde{c}}$ denotes GRU candidate-state weights.}
+
+\FormulaName{Alternative update-gate convention}
+\[
+\begin{aligned}
+&\text{Some sources define } \Gamma_u \text{ with the opposite convention:}\\
+&c^{\langle t\rangle}
+=
+\Gamma_u^{\langle t\rangle}
+\hadamard
+c^{\langle t-1\rangle}
++
+\left(
+1-\Gamma_u^{\langle t\rangle}
+\right)
+\hadamard
+\widetilde{c}^{\langle t\rangle}.
+\end{aligned}
+\]
+
+\subsection{LSTM Forward Pass}
+
+\FormulaName{LSTM concatenated input}
+\[
+\begin{bmatrix}
+a^{\langle t-1\rangle}\\
+x^{\langle t\rangle}
+\end{bmatrix}
+\in
+\R^{(n_a+n_x)\times m}.
+\]
+
+\FormulaName{LSTM gates}
+\[
+\Gamma_f^{\langle t\rangle}
+=
+\sigmoid
+\left(
+W_f
+\begin{bmatrix}
+a^{\langle t-1\rangle}\\
+x^{\langle t\rangle}
+\end{bmatrix}
++
+b_f
+\right).
+\]
+\[
+\Gamma_i^{\langle t\rangle}
+=
+\sigmoid
+\left(
+W_i
+\begin{bmatrix}
+a^{\langle t-1\rangle}\\
+x^{\langle t\rangle}
+\end{bmatrix}
++
+b_i
+\right).
+\]
+\[
+\widetilde{c}^{\langle t\rangle}
+=
+\tanh
+\left(
+W_{\tilde{c}}
+\begin{bmatrix}
+a^{\langle t-1\rangle}\\
+x^{\langle t\rangle}
+\end{bmatrix}
++
+b_{\tilde{c}}
+\right).
+\]
+\[
+c^{\langle t\rangle}
+=
+\Gamma_f^{\langle t\rangle}
+\hadamard
+c^{\langle t-1\rangle}
++
+\Gamma_i^{\langle t\rangle}
+\hadamard
+\widetilde{c}^{\langle t\rangle}.
+\]
+\[
+\Gamma_o^{\langle t\rangle}
+=
+\sigmoid
+\left(
+W_o
+\begin{bmatrix}
+a^{\langle t-1\rangle}\\
+x^{\langle t\rangle}
+\end{bmatrix}
++
+b_o
+\right).
+\]
+\[
+a^{\langle t\rangle}
+=
+\Gamma_o^{\langle t\rangle}
+\hadamard
+\tanh(c^{\langle t\rangle}).
+\]
+\[
+\Gamma_f^{\langle t\rangle},
+\Gamma_i^{\langle t\rangle},
+\Gamma_o^{\langle t\rangle},
+\widetilde{c}^{\langle t\rangle},
+c^{\langle t\rangle},
+a^{\langle t\rangle}
+\in
+\R^{n_a \times m}.
+\]
+\[
+W_f,W_i,W_{\tilde{c}},W_o
+\in
+\R^{n_a \times (n_a+n_x)},
+\qquad
+b_f,b_i,b_{\tilde{c}},b_o
+\in
+\R^{n_a \times 1}.
+\]
+\Use{LSTM gated cell-state update.}
+\Notes{In the LSTM block, $W_{\tilde{c}}$ denotes LSTM candidate-cell weights.}
+
+\subsection{Bidirectional RNN}
+
+\FormulaName{Forward and backward states}
+\[
+\overrightarrow{a}^{\langle t\rangle}
+=
+\mathrm{RNN}_{\rightarrow}
+\left(
+x^{\langle t\rangle},
+\overrightarrow{a}^{\langle t-1\rangle}
+\right).
+\]
+\[
+\overleftarrow{a}^{\langle t\rangle}
+=
+\mathrm{RNN}_{\leftarrow}
+\left(
+x^{\langle t\rangle},
+\overleftarrow{a}^{\langle t+1\rangle}
+\right).
+\]
+\FormulaName{Concatenated bidirectional state}
+\[
+a_{\mathrm{bi}}^{\langle t\rangle}
+=
+\begin{bmatrix}
+\overrightarrow{a}^{\langle t\rangle}\\
+\overleftarrow{a}^{\langle t\rangle}
+\end{bmatrix}
+\in
+\R^{2n_a \times m}.
+\]
+\Use{Bidirectional sequence representation.}
+
+\subsection{RNN / GRU / LSTM Symbol Table}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Symbol & Meaning & Shape / Type \\
+\midrule
+$x^{\langle t\rangle}$ & input at step $\langle t\rangle$ & $\R^{n_x \times m}$ \\
+$a^{\langle t\rangle}$ & hidden activation & $\R^{n_a \times m}$ \\
+$a^{\langle 0\rangle}$ & initial hidden activation & $\R^{n_a \times m}$ \\
+$c^{\langle t\rangle}$ & cell / GRU state & $\R^{n_a \times m}$ \\
+$c^{\langle 0\rangle}$ & initial cell / GRU state & $\R^{n_a \times m}$ \\
+$\hat{y}^{\langle t\rangle}$ & output prediction & $\R^{n_y \times m}$ \\
+$z_y^{\langle t\rangle}$ & output logits & $\R^{n_y \times m}$ \\
+$W_a$ & RNN hidden weights & $\R^{n_a \times (n_a+n_x)}$ \\
+$b_a$ & RNN hidden bias & $\R^{n_a \times 1}$ \\
+$W_y$ & output weights & $\R^{n_y \times n_a}$ \\
+$b_y$ & output bias & $\R^{n_y \times 1}$ \\
+$W_u$ & GRU update-gate weights & $\R^{n_a \times (n_a+n_x)}$ \\
+$b_u$ & GRU update-gate bias & $\R^{n_a \times 1}$ \\
+$W_r$ & GRU reset-gate weights & $\R^{n_a \times (n_a+n_x)}$ \\
+$b_r$ & GRU reset-gate bias & $\R^{n_a \times 1}$ \\
+$W_{\tilde{c}}$ & candidate-state weights & $\R^{n_a \times (n_a+n_x)}$ \\
+$b_{\tilde{c}}$ & candidate-state bias & $\R^{n_a \times 1}$ \\
+$W_f$ & LSTM forget-gate weights & $\R^{n_a \times (n_a+n_x)}$ \\
+$b_f$ & LSTM forget-gate bias & $\R^{n_a \times 1}$ \\
+$W_i$ & LSTM input-gate weights & $\R^{n_a \times (n_a+n_x)}$ \\
+$b_i$ & LSTM input-gate bias & $\R^{n_a \times 1}$ \\
+$W_o$ & LSTM output-gate weights & $\R^{n_a \times (n_a+n_x)}$ \\
+$b_o$ & LSTM output-gate bias & $\R^{n_a \times 1}$ \\
+$\Gamma_u^{\langle t\rangle}$ & GRU update gate & $\R^{n_a \times m}$ \\
+$\Gamma_r^{\langle t\rangle}$ & GRU reset gate & $\R^{n_a \times m}$ \\
+$\Gamma_f^{\langle t\rangle}$ & LSTM forget gate & $\R^{n_a \times m}$ \\
+$\Gamma_i^{\langle t\rangle}$ & LSTM input gate & $\R^{n_a \times m}$ \\
+$\Gamma_o^{\langle t\rangle}$ & LSTM output gate & $\R^{n_a \times m}$ \\
+$\widetilde{c}^{\langle t\rangle}$ & candidate state & $\R^{n_a \times m}$ \\
+$T_x$ & input sequence length & $\mathbb{N}$ \\
+$T_y$ & output sequence length & $\mathbb{N}$ \\
+$m$ & batch size & $\mathbb{N}$ \\
+$n_x$ & input dimension & $\mathbb{N}$ \\
+$n_a$ & hidden-state dimension & $\mathbb{N}$ \\
+$n_y$ & output dimension & $\mathbb{N}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Shape Reference Table}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Quantity & Shape \\
+\midrule
+$x^{\langle t\rangle}$ & $n_x \times m$ \\
+$a^{\langle t\rangle}$ & $n_a \times m$ \\
+$c^{\langle t\rangle}$ & $n_a \times m$ \\
+$\hat{y}^{\langle t\rangle}$ & $n_y \times m$ \\
+$W_a$ & $n_a \times (n_a+n_x)$ \\
+$b_a$ & $n_a \times 1$ \\
+$W_y$ & $n_y \times n_a$ \\
+$b_y$ & $n_y \times 1$ \\
+$W_u,W_r,W_{\tilde{c}}$ (GRU) & $n_a \times (n_a+n_x)$ \\
+$W_f,W_i,W_{\tilde{c}},W_o$ (LSTM) & $n_a \times (n_a+n_x)$ \\
+$a_{\mathrm{bi}}^{\langle t\rangle}$ & $2n_a \times m$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\Notes{$W_{\tilde{c}}$ is reused as a candidate-weight symbol; local GRU/LSTM context determines which parameter set is meant.}

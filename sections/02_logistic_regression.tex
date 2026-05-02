@@ -1,0 +1,129 @@
+\section{Logistic Regression and Binary Classification}
+
+\subsection{Assumptions and Shapes}
+
+\FormulaName{Binary logistic setup}
+\[
+X \in \R^{n_x \times m},
+\qquad
+Y \in \R^{1 \times m},
+\qquad
+w \in \R^{n_x \times 1},
+\qquad
+b \in \R.
+\]
+\[
+x^{(i)} \in \R^{n_x \times 1},
+\qquad
+y^{(i)} \in \{0,1\}.
+\]
+\Use{Binary classification forward/backward pipeline.}
+\Notes{$b$ is broadcast across all $m$ examples.}
+
+\subsection{Forward}
+
+\FormulaName{Single-example forward}
+\[
+\begin{aligned}
+z^{(i)} &= w\transpose x^{(i)} + b,\\
+a^{(i)} &= \hat{y}^{(i)} = \sigmoid(z^{(i)}).
+\end{aligned}
+\]
+\Shapes{$z^{(i)}, a^{(i)}, \hat{y}^{(i)} \in \R$.}
+\Use{Single-example probability output.}
+
+\FormulaName{Vectorized forward}
+\[
+\begin{aligned}
+Z &= w\transpose X + b,\\
+A &= \sigmoid(Z).
+\end{aligned}
+\]
+\Shapes{$Z, A, Y \in \R^{1 \times m}$.}
+\Use{Batch probability output.}
+
+\subsection{Loss and Cost}
+
+\FormulaName{Binary cross-entropy loss}
+\[
+\loss(a^{(i)}, y^{(i)})
+=
+-\left[
+y^{(i)}\log a^{(i)}
++
+(1-y^{(i)})\log(1-a^{(i)})
+\right].
+\]
+\Shapes{$a^{(i)}, y^{(i)} \in \R$.}
+\Use{Single-example binary loss.}
+
+\FormulaName{Average cost}
+\[
+\cost(w,b)
+=
+\frac{1}{m}
+\sum_{i=1}^{m}
+\loss(a^{(i)}, y^{(i)}).
+\]
+\[
+\cost(w,b)
+=
+-\frac{1}{m}
+\sum_{i=1}^{m}
+\left[
+y^{(i)}\log a^{(i)}
++
+(1-y^{(i)})\log(1-a^{(i)})
+\right].
+\]
+\Use{Average binary negative log-likelihood.}
+
+\subsection{Backward}
+
+\FormulaName{Vectorized gradients}
+\[
+\begin{aligned}
+dZ &= A - Y,\\
+dw &= \frac{1}{m} X dZ\transpose,\\
+db &= \frac{1}{m}\sum_{i=1}^{m} dZ^{(i)}.
+\end{aligned}
+\]
+\Shapes{$dZ \in \R^{1 \times m}$, $dw \in \R^{n_x \times 1}$, $db \in \R$.}
+\Use{Sigmoid plus binary cross-entropy gradients.}
+
+\subsection{Parameter Update}
+
+\FormulaName{Gradient descent update}
+\[
+\begin{aligned}
+w &\leftarrow w - \alpha dw,\\
+b &\leftarrow b - \alpha db.
+\end{aligned}
+\]
+\Shapes{$w,dw \in \R^{n_x \times 1}$; $b,db,\alpha \in \R$.}
+\Use{One optimization step.}
+
+\subsection{Symbols and Shapes}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Symbol & Shape / domain & Role \\
+\midrule
+$x^{(i)}$ & $\R^{n_x \times 1}$ & single input column \\
+$y^{(i)}$ & $\{0,1\}$ & single binary label \\
+$X$ & $\R^{n_x \times m}$ & input batch \\
+$Y$ & $\R^{1 \times m}$ & label batch \\
+$w$ & $\R^{n_x \times 1}$ & weight vector \\
+$b$ & $\R$ & scalar bias \\
+$Z$ & $\R^{1 \times m}$ & logits \\
+$A$ & $\R^{1 \times m}$ & predictions \\
+$dZ$ & $\R^{1 \times m}$ & logit gradient \\
+$dw$ & $\R^{n_x \times 1}$ & weight gradient \\
+$db$ & $\R$ & bias gradient \\
+$\alpha$ & $\R_{>0}$ & learning rate \\
+$m$ & $\mathbb{N}$ & batch size \\
+$n_x$ & $\mathbb{N}$ & input dimension \\
+\bottomrule
+\end{tabular}
+\end{center}

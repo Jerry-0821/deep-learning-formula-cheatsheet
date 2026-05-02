@@ -1,0 +1,248 @@
+\section{Word Embeddings and Language Models}
+
+\subsection{Vocabulary and One-hot Representation}
+
+\FormulaName{One-hot token}
+\[
+o_w \in \{0,1\}^{\lvert V\rvert \times 1}.
+\]
+\FormulaName{Batch of one-hot tokens}
+\[
+O^{\langle t\rangle}
+\in
+\{0,1\}^{\lvert V\rvert \times m}.
+\]
+\Use{One-hot token representation.}
+
+\subsection{Embedding Matrix and Lookup}
+
+\FormulaName{Embedding matrix}
+\[
+E \in \R^{d_e \times \lvert V\rvert}.
+\]
+\FormulaName{Single-token lookup}
+\[
+e_w = E o_w.
+\]
+\[
+e_w \in \R^{d_e \times 1}.
+\]
+\FormulaName{Batch lookup}
+\[
+E^{\langle t\rangle}
+=
+E O^{\langle t\rangle}.
+\]
+\[
+E^{\langle t\rangle}
+\in
+\R^{d_e \times m}.
+\]
+\Use{Map one-hot tokens to dense embedding vectors.}
+
+\FormulaName{Alternative row-wise convention}
+\[
+E_{\mathrm{row}} \in \R^{\lvert V\rvert \times d_e}
+\quad
+\Rightarrow
+\quad
+e_w = E_{\mathrm{row}}\transpose o_w.
+\]
+\Use{Alternative row-wise embedding convention.}
+
+\subsection{Embedding Sequence Tensor}
+
+\FormulaName{Time-step embedding sequence}
+\[
+E^{\langle 1\rangle},\dots,E^{\langle T_x\rangle},
+\qquad
+E^{\langle t\rangle}
+\in
+\R^{d_e \times m}.
+\]
+\FormulaName{Optional stacked form}
+\[
+\mathcal{E}
+\in
+\R^{T_x \times m \times d_e}.
+\]
+\Use{Sequence of embedding vectors.}
+\Notes{Main convention keeps time steps as separate $d_e \times m$ matrices; frameworks may stack batch-first or time-first.}
+
+\subsection{Cosine Similarity}
+
+\FormulaName{Cosine similarity}
+\[
+\operatorname{cos}(u,v)
+=
+\frac{
+u\transpose v
+}{
+\lVert u\rVert_2 \lVert v\rVert_2
+},
+\qquad
+u,v\in\R^{d_e}.
+\]
+\Use{Embedding similarity.}
+
+\subsection{Word Analogy Objective}
+
+\FormulaName{Analogy vector}
+\[
+v_b - v_a + v_c.
+\]
+\FormulaName{Nearest word}
+\[
+d^*
+=
+\argmax_{w \in V}
+\operatorname{cos}
+\left(
+v_w,
+v_b - v_a + v_c
+\right).
+\]
+\Use{Vector-offset analogy search.}
+\Notes{Exclude source words from the candidate set if needed.}
+
+\subsection{Language Model Softmax}
+
+\FormulaName{Vocabulary logits}
+\[
+a^{\langle t\rangle}
+\in
+\R^{n_a \times m}.
+\]
+\[
+z^{\langle t\rangle}
+=
+W_o a^{\langle t\rangle}
++
+b_o.
+\]
+\FormulaName{Softmax prediction}
+\[
+\hat{y}^{\langle t\rangle}
+=
+\softmax
+\left(
+z^{\langle t\rangle}
+\right).
+\]
+\[
+W_o \in \R^{\lvert V\rvert \times n_a},
+\qquad
+b_o \in \R^{\lvert V\rvert \times 1}.
+\]
+\[
+z^{\langle t\rangle},
+\hat{y}^{\langle t\rangle}
+\in
+\R^{\lvert V\rvert \times m}.
+\]
+\Use{Next-token probability distribution.}
+
+\subsection{Vocabulary Cross-Entropy}
+
+\FormulaName{Single time-step loss}
+\[
+\loss^{\langle t\rangle}
+=
+-\sum_{k=1}^{\lvert V\rvert}
+y_k^{\langle t\rangle}
+\log
+\hat{y}_k^{\langle t\rangle}.
+\]
+\FormulaName{Sequence loss}
+\[
+\loss
+=
+-\sum_{\tau=1}^{T_y}
+\sum_{k=1}^{\lvert V\rvert}
+y_k^{\langle \tau\rangle}
+\log
+\hat{y}_k^{\langle \tau\rangle}.
+\]
+\FormulaName{Batch average}
+\[
+\cost
+=
+\frac{1}{m}
+\sum_{i=1}^{m}
+\loss^{(i)}.
+\]
+\Use{Language-model negative log-likelihood.}
+
+\subsection{Perplexity}
+
+\FormulaName{Average token negative log-likelihood}
+\[
+\bar{\loss}
+=
+-\frac{1}{N}
+\sum_{i=1}^{N}
+\log
+P(w_i \given w_{<i}).
+\]
+\FormulaName{Perplexity}
+\[
+\operatorname{PPL}
+=
+\exp
+\left(
+\bar{\loss}
+\right).
+\]
+\Use{Language-model evaluation metric.}
+\Notes{$N$ is the number of evaluated tokens; $w_{<i}$ denotes tokens before position $i$.}
+
+\subsection{Word Embedding Symbol Table}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Symbol & Meaning & Shape / Type \\
+\midrule
+$\lvert V\rvert$ & vocabulary size & $\mathbb{N}$ \\
+$d_e$ & embedding dimension & $\mathbb{N}$ \\
+$w$ & token / word & element of $V$ \\
+$o_w$ & one-hot vector for token $w$ & $\{0,1\}^{\lvert V\rvert \times 1}$ \\
+$O^{\langle t\rangle}$ & one-hot batch at step $\langle t\rangle$ & $\{0,1\}^{\lvert V\rvert \times m}$ \\
+$E$ & column-wise embedding matrix & $\R^{d_e \times \lvert V\rvert}$ \\
+$E_{\mathrm{row}}$ & optional row-wise embedding matrix & $\R^{\lvert V\rvert \times d_e}$ \\
+$e_w$ & token embedding & $\R^{d_e \times 1}$ \\
+$E^{\langle t\rangle}$ & embedding batch at step $\langle t\rangle$ & $\R^{d_e \times m}$ \\
+$v_w$ & embedding vector for word $w$ & $\R^{d_e}$ \\
+$a^{\langle t\rangle}$ & language-model hidden state & $\R^{n_a \times m}$ \\
+$W_o$ & vocabulary output weights & $\R^{\lvert V\rvert \times n_a}$ \\
+$b_o$ & vocabulary output bias & $\R^{\lvert V\rvert \times 1}$ \\
+$z^{\langle t\rangle}$ & vocabulary logits & $\R^{\lvert V\rvert \times m}$ \\
+$\hat{y}^{\langle t\rangle}$ & predicted token distribution & $\R^{\lvert V\rvert \times m}$ \\
+$y^{\langle t\rangle}$ & target token distribution & $\R^{\lvert V\rvert \times m}$ \\
+$T_x$ & input sequence length & $\mathbb{N}$ \\
+$T_y$ & output sequence length & $\mathbb{N}$ \\
+$N$ & evaluated token count & $\mathbb{N}$ \\
+$\operatorname{PPL}$ & perplexity & scalar \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Shape Reference Table}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Quantity & Shape \\
+\midrule
+$o_w$ & $\lvert V\rvert \times 1$ \\
+$O^{\langle t\rangle}$ & $\lvert V\rvert \times m$ \\
+$E$ & $d_e \times \lvert V\rvert$ \\
+$e_w$ & $d_e \times 1$ \\
+$E^{\langle t\rangle}$ & $d_e \times m$ \\
+$a^{\langle t\rangle}$ & $n_a \times m$ \\
+$W_o$ & $\lvert V\rvert \times n_a$ \\
+$b_o$ & $\lvert V\rvert \times 1$ \\
+$z^{\langle t\rangle},\hat{y}^{\langle t\rangle}$ & $\lvert V\rvert \times m$ \\
+\bottomrule
+\end{tabular}
+\end{center}

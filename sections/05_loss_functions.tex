@@ -1,0 +1,121 @@
+\section{Loss and Cost Functions}
+
+\subsection{Binary Cross-Entropy}
+
+\FormulaName{Single-example binary loss}
+\[
+\loss(a,y)
+=
+-\left[
+y\log a + (1-y)\log(1-a)
+\right].
+\]
+\Shapes{$a \in (0,1)$, $y \in \{0,1\}$.}
+\Use{Binary classification.}
+
+\FormulaName{Batch binary cost}
+\[
+\cost
+=
+\frac{1}{m}
+\sum_{i=1}^{m}
+\loss(a^{(i)},y^{(i)}).
+\]
+\Shapes{$A,Y \in \R^{1 \times m}$.}
+\Use{Average binary negative log-likelihood.}
+
+\subsection{Multiclass Cross-Entropy}
+
+\FormulaName{Single-example multiclass loss}
+\[
+\loss(\hat{y},y)
+=
+-\sum_{k=1}^{K} y_k \log \hat{y}_k.
+\]
+\Shapes{$\hat{y},y \in \R^{K \times 1}$, $\sum_{k=1}^{K}\hat{y}_k=1$.}
+\Use{Multi-class classification.}
+
+\FormulaName{One-hot true class form}
+\[
+\loss(\hat{y},y)
+=
+-\log \hat{y}_c.
+\]
+\Shapes{$c \in \{1,\dots,K\}$.}
+\Use{One-hot categorical target.}
+
+\subsection{Mean Squared Error}
+
+\FormulaName{Single-example squared error}
+\[
+\loss(\hat{y},y)
+=
+\frac{1}{2}
+\left\lVert \hat{y}-y \right\rVert_2^2.
+\]
+\Shapes{$\hat{y},y \in \R^{n_y \times 1}$.}
+\Use{Regression.}
+
+\FormulaName{Batch mean squared error}
+\[
+\cost
+=
+\frac{1}{m}
+\sum_{i=1}^{m}
+\frac{1}{2}
+\left\lVert \hat{y}^{(i)}-y^{(i)} \right\rVert_2^2.
+\]
+\Shapes{$\hat{Y},Y \in \R^{n_y \times m}$.}
+\Use{Average regression objective.}
+
+\subsection{Sequence Negative Log-Likelihood}
+
+\FormulaName{Conditional sequence loss}
+\[
+\loss
+=
+-\sum_{t=1}^{T_y}
+\log P\left(
+y^{\langle t\rangle}
+\given
+y^{\langle 1\rangle},\dots,y^{\langle t-1\rangle},x
+\right).
+\]
+\Shapes{$t$ is a sequence time-step index; $T_y$ is output length.}
+\Use{Sequence modeling.}
+
+\subsection{Regularized Cost}
+
+\FormulaName{L2-regularized objective}
+\[
+\cost_{\mathrm{reg}}
+=
+\cost
++
+\frac{\lambda}{2m}
+\sum_{l=1}^{L}
+\left\lVert W^{[l]} \right\rVert_F^2.
+\]
+\Shapes{$W^{[l]} \in \R^{n^{[l]} \times n^{[l-1]}}$.}
+\Use{L2-regularized objective.}
+
+\subsection{Symbols}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Symbol & Shape / domain & Role \\
+\midrule
+$\loss$ & scalar & single-example or sequence loss \\
+$\cost$ & scalar & batch average cost \\
+$a$ & $(0,1)$ & binary prediction \\
+$\hat{y}$ & $\R^{K \times 1}$ or $\R^{n_y \times 1}$ & prediction vector \\
+$y$ & label domain & target \\
+$K$ & $\mathbb{N}$ & number of classes \\
+$c$ & $\{1,\dots,K\}$ & true class index \\
+$T_y$ & $\mathbb{N}$ & output sequence length \\
+$\lambda$ & $\R_{\ge 0}$ & L2 regularization strength \\
+$\left\lVert W^{[l]} \right\rVert_F^2$ & scalar & squared Frobenius norm \\
+\bottomrule
+\end{tabular}
+\end{center}

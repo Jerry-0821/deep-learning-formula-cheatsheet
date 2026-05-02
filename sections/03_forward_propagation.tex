@@ -1,0 +1,108 @@
+\section{Forward Propagation}
+
+\subsection{Assumptions and Dense-Layer Shapes}
+
+\FormulaName{Layer input and parameters}
+\[
+A^{[0]} = X,
+\qquad
+A^{[l-1]} \in \R^{n^{[l-1]} \times m}.
+\]
+\[
+W^{[l]} \in \R^{n^{[l]} \times n^{[l-1]}},
+\qquad
+b^{[l]} \in \R^{n^{[l]} \times 1}.
+\]
+\Use{Dense layer shape contract.}
+\Notes{$b^{[l]}$ is broadcast across the batch axis.}
+
+\subsection{Layer-wise Forward Propagation}
+
+\FormulaName{Affine-activation block}
+\[
+\begin{aligned}
+Z^{[l]} &= W^{[l]}A^{[l-1]} + b^{[l]},\\
+A^{[l]} &= g^{[l]}(Z^{[l]}).
+\end{aligned}
+\]
+\Shapes{
+$Z^{[l]}, A^{[l]} \in \R^{n^{[l]} \times m}$.
+}
+\Use{Dense layer forward pass.}
+
+\FormulaName{Shape check}
+\[
+(n^{[l]} \times n^{[l-1]})
+\cdot
+(n^{[l-1]} \times m)
+\longrightarrow
+n^{[l]} \times m.
+\]
+\Use{Matrix multiplication compatibility.}
+
+\subsection{Deep Network Composition}
+
+\FormulaName{Recursive composition}
+\[
+\begin{aligned}
+A^{[0]} &= X,\\
+Z^{[l]} &= W^{[l]}A^{[l-1]} + b^{[l]},\\
+A^{[l]} &= g^{[l]}(Z^{[l]}),
+\qquad l=1,\dots,L.
+\end{aligned}
+\]
+\[
+A^{[L]}
+=
+g^{[L]}
+\left(
+W^{[L]}A^{[L-1]} + b^{[L]}
+\right).
+\]
+\Use{Deep network forward pipeline.}
+
+\subsection{Output Layer Choices}
+
+\begin{center}
+\begin{tabular}{llll}
+\toprule
+Task & Output activation & Output width & Output shape \\
+\midrule
+Binary classification & $A^{[L]}=\sigmoid(Z^{[L]})$ & $n^{[L]}=1$ & $\R^{1 \times m}$ \\
+Multi-class classification & $A^{[L]}=\softmax(Z^{[L]})$ & $n^{[L]}=K$ & $\R^{K \times m}$ \\
+Regression & $A^{[L]}=Z^{[L]}$ & $n^{[L]}=n_y$ & $\R^{n_y \times m}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Cache Notation}
+
+\FormulaName{Layer cache}
+\[
+\mathrm{cache}^{[l]} =
+\left(
+A^{[l-1]}, W^{[l]}, b^{[l]}, Z^{[l]}
+\right).
+\]
+\Use{Stored quantities for backpropagation.}
+
+\subsection{Symbols and Shapes}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Symbol & Shape / domain & Role \\
+\midrule
+$A^{[0]}$ & $\R^{n_x \times m}$ & input batch \\
+$A^{[l-1]}$ & $\R^{n^{[l-1]} \times m}$ & previous activation \\
+$W^{[l]}$ & $\R^{n^{[l]} \times n^{[l-1]}}$ & layer weights \\
+$b^{[l]}$ & $\R^{n^{[l]} \times 1}$ & layer bias \\
+$Z^{[l]}$ & $\R^{n^{[l]} \times m}$ & pre-activation \\
+$A^{[l]}$ & $\R^{n^{[l]} \times m}$ & activation \\
+$g^{[l]}$ & elementwise or output map & activation function \\
+$L$ & $\mathbb{N}$ & number of layers \\
+$n^{[l]}$ & $\mathbb{N}$ & units in layer $l$ \\
+$m$ & $\mathbb{N}$ & batch size \\
+\bottomrule
+\end{tabular}
+\end{center}

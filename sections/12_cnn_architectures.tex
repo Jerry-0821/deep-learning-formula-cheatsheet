@@ -1,0 +1,133 @@
+\section{Classic CNN Architectures}
+
+\subsection{Architecture Table}
+
+\begin{center}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.18\linewidth}
+                >{\raggedright\arraybackslash}p{0.34\linewidth}
+                >{\raggedright\arraybackslash}p{0.34\linewidth}}
+\toprule
+Architecture & Core pattern & Formula / Shape label \\
+\midrule
+LeNet &
+Conv / pool stack &
+$\mathrm{Conv} \to \mathrm{Pool} \to \mathrm{Conv} \to \mathrm{Pool} \to \mathrm{FC}$ \\
+\addlinespace
+AlexNet &
+Convolution stack with FC head &
+$\mathrm{Conv}^{(k)} \to \mathrm{FC}$ \\
+\addlinespace
+VGG &
+Repeated small filters &
+$[\mathrm{Conv}_{3\times3}] \times k \to \mathrm{Pool}$ \\
+\addlinespace
+ResNet &
+Shortcut addition &
+$A^{[l+2]} = g(Z^{[l+2]} + A^{[l]})$ \\
+\addlinespace
+Inception &
+Parallel branches &
+$A^{[l]}=\operatorname{Concat}(A_{1\times1},A_{3\times3},A_{5\times5},A_{\mathrm{pool}})$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{VGG Block Pattern}
+
+\FormulaName{VGG-style block}
+\[
+A^{[l]}
+=
+\mathrm{Pool}
+\left(
+\mathrm{Conv}_{3\times3}^{(k)}
+(A^{[l-1]})
+\right).
+\]
+\Use{Repeated small-filter convolution block.}
+
+\subsection{Residual Block}
+
+\FormulaName{Identity shortcut}
+\[
+A^{[l+2]}
+=
+g
+\left(
+Z^{[l+2]} + A^{[l]}
+\right).
+\]
+\FormulaName{Projection shortcut}
+\[
+A^{[l+2]}
+=
+g
+\left(
+Z^{[l+2]} + W_s A^{[l]}
+\right).
+\]
+\Use{Residual connection.}
+\Notes{For identity shortcuts, $Z^{[l+2]}$ and $A^{[l]}$ must be shape-compatible. For projection shortcuts, $W_s A^{[l]}$ matches the shape of $Z^{[l+2]}$.}
+
+\subsection{Inception Concatenation}
+
+\FormulaName{Channel concatenation}
+\[
+A^{[l]}
+=
+\operatorname{Concat}_{\mathrm{channels}}
+\left(
+A_{1\times1},
+A_{3\times3},
+A_{5\times5},
+A_{\mathrm{pool}}
+\right).
+\]
+\[
+n_C^{[l]}
+=
+n_{C,1\times1}
++
+n_{C,3\times3}
++
+n_{C,5\times5}
++
+n_{C,\mathrm{pool}}.
+\]
+\Use{Parallel convolution branches with channel concatenation.}
+
+\subsection{1x1 Bottleneck Parameter Reduction}
+
+\FormulaName{Without bottleneck}
+\[
+\#\mathrm{params}
+=
+(f^2 n_C^{\mathrm{in}} + 1)n_C^{\mathrm{out}}.
+\]
+\FormulaName{With 1x1 bottleneck width $r$}
+\[
+\#\mathrm{params}
+=
+(1 \cdot 1 \cdot n_C^{\mathrm{in}} + 1)r
++
+(f^2 r + 1)n_C^{\mathrm{out}}.
+\]
+\Use{Parameter reduction before expensive convolution.}
+
+\subsection{Architecture Symbol Table}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Symbol & Meaning & Shape / Type \\
+\midrule
+$A^{[l]}$ & activation at layer $l$ & layer tensor \\
+$Z^{[l]}$ & pre-activation at layer $l$ & layer tensor \\
+$g$ & activation function & layer map \\
+$W_s$ & shortcut projection & shape-matching map \\
+$n_C^{[l]}$ & output channels at layer $l$ & $\mathbb{N}$ \\
+$r$ & bottleneck width & $\mathbb{N}$ \\
+$\operatorname{Concat}_{\mathrm{channels}}$ & channel-axis concatenation & NHWC channel axis \\
+\bottomrule
+\end{tabular}
+\end{center}

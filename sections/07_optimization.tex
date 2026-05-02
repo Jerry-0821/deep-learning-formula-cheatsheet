@@ -1,0 +1,293 @@
+\section{Gradient Descent and Optimization}
+
+\subsection{Basic Gradient Descent}
+
+\FormulaName{Generic update}
+\[
+\theta \leftarrow \theta - \alpha \nabla_{\theta}\cost(\theta).
+\]
+\Shapes{$\theta$ and $\nabla_{\theta}\cost(\theta)$ have identical shape.}
+\Use{Basic full-batch or mini-batch parameter update.}
+
+\FormulaName{Layer-wise dense update}
+\[
+\begin{aligned}
+W^{[l]} &\leftarrow W^{[l]} - \alpha dW^{[l]},\\
+b^{[l]} &\leftarrow b^{[l]} - \alpha db^{[l]}.
+\end{aligned}
+\]
+\[
+W^{[l]}, dW^{[l]}
+\in
+\R^{n^{[l]} \times n^{[l-1]}},
+\qquad
+b^{[l]}, db^{[l]}
+\in
+\R^{n^{[l]} \times 1}.
+\]
+\Use{Dense-layer parameter update.}
+
+\subsection{Mini-batch Gradient Descent}
+
+\FormulaName{Mini-batch}
+\[
+X^{\{k\}} \in \R^{n_x \times m_k},
+\qquad
+Y^{\{k\}} \in \R^{n_y \times m_k}.
+\]
+\Use{Mini-batch $k$ with $m_k$ examples.}
+
+\FormulaName{Mini-batch cost and update}
+\[
+\cost^{\{k\}}
+=
+\frac{1}{m_k}
+\sum_{i=1}^{m_k}
+\loss
+\left(
+\hat{y}^{(i)}, y^{(i)}
+\right).
+\]
+\[
+\theta \leftarrow
+\theta
+-
+\alpha
+\nabla_{\theta}\cost^{\{k\}}(\theta).
+\]
+\Use{Mini-batch parameter update.}
+
+\subsection{Exponentially Weighted Average}
+
+\FormulaName{EWA}
+\[
+v_t = \beta v_{t-1} + (1-\beta)q_t.
+\]
+\[
+\hat{v}_t
+=
+\frac{v_t}{1-\beta^t}.
+\]
+\Use{Smooth a sequence of noisy values.}
+\Notes{$q_t$ is the observed quantity; $v_t$ is its exponentially weighted average.}
+\Notes{Here $t$ denotes optimizer/update step, not sequence time step or mini-batch index.}
+
+\subsection{Momentum}
+
+\FormulaName{Generic momentum update}
+\[
+g_t = \nabla_{\theta}\cost_t(\theta_{t-1}).
+\]
+\[
+\begin{aligned}
+u_t
+&=
+\beta u_{t-1}
++
+(1-\beta)g_t,\\
+\theta_t
+&=
+\theta_{t-1}
+-
+\alpha u_t.
+\end{aligned}
+\]
+\Shapes{$u_t,g_t,\theta_t$ have identical parameter shape.}
+\Use{Momentum update rule.}
+
+\FormulaName{Layer-wise momentum}
+\[
+\begin{aligned}
+u_{dW^{[l]},t}
+&=
+\beta u_{dW^{[l]},t-1}
++
+(1-\beta)dW^{[l]}_t,\\
+u_{db^{[l]},t}
+&=
+\beta u_{db^{[l]},t-1}
++
+(1-\beta)db^{[l]}_t.
+\end{aligned}
+\]
+\[
+\begin{aligned}
+W^{[l]}_t
+&=
+W^{[l]}_{t-1}
+-
+\alpha u_{dW^{[l]},t},\\
+b^{[l]}_t
+&=
+b^{[l]}_{t-1}
+-
+\alpha u_{db^{[l]},t}.
+\end{aligned}
+\]
+\Shapes{$u_{dW^{[l]},t} \in \R^{n^{[l]} \times n^{[l-1]}}$; $u_{db^{[l]},t} \in \R^{n^{[l]} \times 1}$.}
+\Use{Layer-wise momentum accumulators.}
+
+\subsection{RMSProp}
+
+\FormulaName{Generic RMSProp update}
+\[
+g_t = \nabla_{\theta}\cost_t(\theta_{t-1}).
+\]
+\[
+\begin{aligned}
+s_t
+&=
+\beta s_{t-1}
++
+(1-\beta)g_t^{\odot 2},\\
+\theta_t
+&=
+\theta_{t-1}
+-
+\alpha
+\frac{g_t}{\sqrt{s_t}+\epsilon}.
+\end{aligned}
+\]
+\Shapes{$s_t,g_t,\theta_t$ have identical parameter shape.}
+\Use{Elementwise squared-gradient scaling.}
+
+\FormulaName{Layer-wise RMSProp}
+\[
+\begin{aligned}
+s_{dW^{[l]},t}
+&=
+\beta s_{dW^{[l]},t-1}
++
+(1-\beta)(dW^{[l]}_t)^{\odot 2},\\
+s_{db^{[l]},t}
+&=
+\beta s_{db^{[l]},t-1}
++
+(1-\beta)(db^{[l]}_t)^{\odot 2}.
+\end{aligned}
+\]
+\[
+\begin{aligned}
+W^{[l]}_t
+&=
+W^{[l]}_{t-1}
+-
+\alpha
+\frac{dW^{[l]}_t}{\sqrt{s_{dW^{[l]},t}}+\epsilon},\\
+b^{[l]}_t
+&=
+b^{[l]}_{t-1}
+-
+\alpha
+\frac{db^{[l]}_t}{\sqrt{s_{db^{[l]},t}}+\epsilon}.
+\end{aligned}
+\]
+\Shapes{$s_{dW^{[l]},t} \in \R^{n^{[l]} \times n^{[l-1]}}$; $s_{db^{[l]},t} \in \R^{n^{[l]} \times 1}$.}
+\Notes{Squares, square roots, and divisions are elementwise.}
+
+\subsection{Adam}
+
+\FormulaName{Generic Adam update}
+\[
+g_t = \nabla_{\theta}\cost_t(\theta_{t-1}).
+\]
+\[
+\begin{aligned}
+m_t
+&=
+\beta_1 m_{t-1}
++
+(1-\beta_1)g_t,\\
+v_t
+&=
+\beta_2 v_{t-1}
++
+(1-\beta_2)g_t^{\odot 2}.
+\end{aligned}
+\]
+\[
+\hat{m}_t
+=
+\frac{m_t}{1-\beta_1^t},
+\qquad
+\hat{v}_t
+=
+\frac{v_t}{1-\beta_2^t}.
+\]
+\[
+\theta_t
+=
+\theta_{t-1}
+-
+\alpha
+\frac{\hat{m}_t}{\sqrt{\hat{v}_t}+\epsilon}.
+\]
+\Shapes{$m_t,v_t,g_t,\theta_t$ have identical parameter shape.}
+\Use{Momentum plus RMSProp update.}
+\Notes{In Adam, $m_t$ is the first-moment accumulator; batch size remains $m$.}
+
+\FormulaName{Layer-wise Adam accumulator shapes}
+\[
+m_{dW^{[l]}}, v_{dW^{[l]}}
+\in
+\R^{n^{[l]} \times n^{[l-1]}},
+\qquad
+m_{db^{[l]}}, v_{db^{[l]}}
+\in
+\R^{n^{[l]} \times 1}.
+\]
+\Use{Dense-layer Adam state shapes.}
+
+\subsection{Learning Rate Decay}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Decay type & Formula \\
+\midrule
+Inverse-time &
+\(\displaystyle \alpha_t=\frac{\alpha_0}{1+\lambda t}\) \\
+\addlinespace
+Exponential &
+\(\displaystyle \alpha_t=\alpha_0\gamma^t\) \\
+\addlinespace
+Step &
+\(\displaystyle \alpha_t=\alpha_0\gamma^{\lfloor t/r \rfloor}\) \\
+\bottomrule
+\end{tabular}
+\end{center}
+\Use{Learning-rate schedule.}
+
+\subsection{Optimizer Symbol Table}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Symbol & Meaning & Shape / Type \\
+\midrule
+$\theta_t$ & parameter value at step $t$ & parameter shape \\
+$\cost$ & cost function & scalar \\
+$g_t$ & gradient at step $t$ & same shape as $\theta_t$ \\
+$q_t$ & generic quantity for EWA & scalar or tensor \\
+$\alpha$ & learning rate & scalar \\
+$\alpha_t$ & learning rate at step $t$ & scalar \\
+$\alpha_0$ & initial learning rate & scalar \\
+$\beta$ & EWA / Momentum / RMSProp decay & scalar in $[0,1)$ \\
+$\beta_1$ & Adam first-moment decay & scalar in $[0,1)$ \\
+$\beta_2$ & Adam second-moment decay & scalar in $[0,1)$ \\
+$\epsilon$ & denominator stabilizer & small scalar \\
+$v_t$ & EWA value or Adam second moment & same shape as tracked quantity \\
+$u_t$ & Momentum accumulator & same shape as $\theta_t$ \\
+$s_t$ & RMSProp squared-gradient accumulator & same shape as $\theta_t$ \\
+$m_t$ & Adam first-moment accumulator & same shape as $\theta_t$ \\
+$t$ & optimizer/update step & $\mathbb{N}$ \\
+$k$ & mini-batch index & $\mathbb{N}$ \\
+$X^{\{k\}}$ & input mini-batch & $\R^{n_x \times m_k}$ \\
+$Y^{\{k\}}$ & label mini-batch & $\R^{n_y \times m_k}$ \\
+$m_k$ & mini-batch size & $\mathbb{N}$ \\
+$\lambda$ & inverse-time decay rate & scalar \\
+$\gamma$ & multiplicative decay factor & scalar \\
+$r$ & step-decay interval & $\mathbb{N}$ \\
+\bottomrule
+\end{tabular}
+\end{center}

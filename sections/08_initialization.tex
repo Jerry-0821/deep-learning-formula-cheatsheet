@@ -1,0 +1,152 @@
+\section{Initialization}
+
+\subsection{Parameter Shapes}
+
+\FormulaName{Layer parameter shapes}
+\[
+W^{[l]} \in \R^{n^{[l]} \times n^{[l-1]}},
+\qquad
+b^{[l]} \in \R^{n^{[l]} \times 1}.
+\]
+\[
+\mathrm{fan\_in}=n^{[l-1]},
+\qquad
+\mathrm{fan\_out}=n^{[l]}.
+\]
+\Use{Layer-wise initialization shape reference.}
+
+\subsection{Zero Initialization}
+
+\FormulaName{Zero parameters}
+\[
+W^{[l]} = 0,
+\qquad
+b^{[l]} = 0.
+\]
+\Shapes{$W^{[l]} \in \R^{n^{[l]} \times n^{[l-1]}}$; $b^{[l]} \in \R^{n^{[l]} \times 1}$.}
+\Use{Zero initialization reference.}
+\Notes{Bias can be initialized to zero. Weight matrices should not all be initialized to zero in hidden layers.}
+
+\subsection{Small Random Initialization}
+
+\FormulaName{Gaussian small random weights}
+\[
+W^{[l]} \sim \mathcal{N}(0,\sigma^2),
+\qquad
+b^{[l]} = 0.
+\]
+\Shapes{$W^{[l]} \in \R^{n^{[l]} \times n^{[l-1]}}$; $b^{[l]} \in \R^{n^{[l]} \times 1}$.}
+\Use{Simple symmetry-breaking initialization.}
+\Notes{$\sigma$ is chosen small in simple networks.}
+
+\subsection{Xavier / Glorot Initialization}
+
+\FormulaName{Glorot / Xavier variance}
+\[
+\operatorname{Var}(W^{[l]})
+=
+\frac{2}{\mathrm{fan\_in}+\mathrm{fan\_out}}.
+\]
+\Use{Common initialization for tanh / sigmoid-style networks.}
+
+\FormulaName{Xavier normal}
+\[
+W^{[l]}
+\sim
+\mathcal{N}
+\left(
+0,
+\frac{2}{\mathrm{fan\_in}+\mathrm{fan\_out}}
+\right).
+\]
+\Shapes{$W^{[l]} \in \R^{n^{[l]} \times n^{[l-1]}}$.}
+\Use{Normal Xavier / Glorot initialization.}
+
+\FormulaName{Xavier uniform}
+\[
+W^{[l]}
+\sim
+\mathcal{U}
+\left(
+-\sqrt{\frac{6}{\mathrm{fan\_in}+\mathrm{fan\_out}}},
+\sqrt{\frac{6}{\mathrm{fan\_in}+\mathrm{fan\_out}}}
+\right).
+\]
+\Shapes{$W^{[l]} \in \R^{n^{[l]} \times n^{[l-1]}}$.}
+\Use{Uniform Xavier / Glorot initialization.}
+
+\FormulaName{Course simplified Xavier-style variance}
+\[
+\operatorname{Var}(W^{[l]})
+=
+\frac{1}{\mathrm{fan\_in}}.
+\]
+\Use{Common simplified Xavier-style convention.}
+\Notes{$1/\mathrm{fan\_in}$ is a common simplified convention in some course notes.}
+
+\subsection{He Initialization}
+
+\FormulaName{He variance}
+\[
+\operatorname{Var}(W^{[l]})
+=
+\frac{2}{\mathrm{fan\_in}}.
+\]
+\Use{Common initialization for ReLU-style hidden layers.}
+
+\FormulaName{He normal}
+\[
+W^{[l]}
+\sim
+\mathcal{N}
+\left(
+0,
+\frac{2}{\mathrm{fan\_in}}
+\right).
+\]
+\Shapes{$W^{[l]} \in \R^{n^{[l]} \times n^{[l-1]}}$.}
+\Use{Normal He initialization.}
+
+\FormulaName{He scaled random matrix}
+\[
+W^{[l]}
+=
+\sqrt{\frac{2}{n^{[l-1]}}}
+\, R^{[l]},
+\qquad
+R^{[l]} \sim \mathcal{N}(0,1).
+\]
+\Shapes{$R^{[l]}, W^{[l]} \in \R^{n^{[l]} \times n^{[l-1]}}$.}
+\Use{Standard-deviation form.}
+
+\subsection{Bias Initialization}
+
+\FormulaName{Bias initialization}
+\[
+b^{[l]} = 0,
+\qquad
+b^{[l]} \in \R^{n^{[l]} \times 1}.
+\]
+\Use{Bias initialization.}
+\Notes{Bias zero initialization does not cause hidden-unit symmetry when weights are randomly initialized.}
+
+\subsection{Initialization Symbol Table}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Symbol & Meaning & Shape / Type \\
+\midrule
+$W^{[l]}$ & layer weights & $\R^{n^{[l]} \times n^{[l-1]}}$ \\
+$b^{[l]}$ & layer bias & $\R^{n^{[l]} \times 1}$ \\
+$n^{[l]}$ & units in layer $l$ & $\mathbb{N}$ \\
+$n^{[l-1]}$ & units in previous layer & $\mathbb{N}$ \\
+$\mathrm{fan\_in}$ & input width & $n^{[l-1]}$ \\
+$\mathrm{fan\_out}$ & output width & $n^{[l]}$ \\
+$\sigma^2$ & initialization variance & scalar \\
+$R^{[l]}$ & standard normal random matrix & $\R^{n^{[l]} \times n^{[l-1]}}$ \\
+$\mathcal{N}(0,\sigma^2)$ & normal distribution & distribution \\
+$\mathcal{U}(a,b)$ & uniform distribution & distribution \\
+\bottomrule
+\end{tabular}
+\end{center}

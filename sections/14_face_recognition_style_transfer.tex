@@ -1,0 +1,135 @@
+\section{Face Recognition and Neural Style Transfer}
+
+\subsection{Embedding Function}
+
+\FormulaName{Image embedding}
+\[
+f(x) \in \R^d.
+\]
+\Use{Map input image to embedding vector.}
+
+\subsection{Pairwise Distance}
+
+\FormulaName{Embedding-space distance}
+\[
+d(x_i,x_j)
+=
+\left\lVert f(x_i)-f(x_j) \right\rVert_2^2.
+\]
+\Use{Embedding-space distance.}
+
+\subsection{Siamese / Triplet Loss}
+
+\FormulaName{Triplet}
+\[
+(A,P,N).
+\]
+\Use{Anchor, positive, negative.}
+
+\FormulaName{Triplet loss}
+\[
+\loss_{\mathrm{triplet}}
+=
+\max
+\left(
+\left\lVert f(A)-f(P) \right\rVert_2^2
+-
+\left\lVert f(A)-f(N) \right\rVert_2^2
++
+\alpha,
+0
+\right).
+\]
+\Use{Separate positive and negative pairs by margin $\alpha$.}
+
+\subsection{Content Cost}
+
+\FormulaName{Content objective}
+\[
+\cost_{\mathrm{content}}(C,G)
+=
+\frac{1}{2}
+\left\lVert
+A_C^{[l]} - A_G^{[l]}
+\right\rVert_F^2.
+\]
+\Use{Content similarity between generated and content image activations.}
+
+\subsection{Gram Matrix}
+
+\FormulaName{Style Gram matrix}
+\[
+F^{[l]} \in \R^{n_C^{[l]} \times (n_H^{[l]}n_W^{[l]})},
+\qquad
+G^{[l]}
+=
+F^{[l]}(F^{[l]})\transpose.
+\]
+\[
+G^{[l]} \in \R^{n_C^{[l]} \times n_C^{[l]}}.
+\]
+\Use{Channel-correlation matrix for style.}
+
+\subsection{Style Cost}
+
+\FormulaName{Layer style cost}
+\[
+\cost_{\mathrm{style}}^{[l]}(S,G)
+=
+\frac{1}{
+(2 n_H^{[l]} n_W^{[l]} n_C^{[l]})^2
+}
+\left\lVert
+G_S^{[l]} - G_G^{[l]}
+\right\rVert_F^2.
+\]
+\FormulaName{Total style cost}
+\[
+\cost_{\mathrm{style}}(S,G)
+=
+\sum_l
+\lambda_l
+\cost_{\mathrm{style}}^{[l]}(S,G).
+\]
+\Use{Style similarity across selected layers.}
+
+\subsection{Total Neural Style Transfer Objective}
+
+\FormulaName{Style transfer objective}
+\[
+\cost(G)
+=
+\alpha \cost_{\mathrm{content}}(C,G)
++
+\beta \cost_{\mathrm{style}}(S,G).
+\]
+\Use{Neural style transfer objective.}
+\Notes{Here $\alpha,\beta$ are style-transfer weights, not optimizer learning rate or BatchNorm shift.}
+
+\subsection{Symbol Table}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Symbol & Meaning & Shape / Type \\
+\midrule
+$f(x)$ & image embedding & $\R^d$ \\
+$d$ & embedding dimension & $\mathbb{N}$ \\
+$A,P,N$ & anchor, positive, negative images & images \\
+$\loss_{\mathrm{triplet}}$ & triplet loss & scalar \\
+$\alpha$ in triplet loss & margin & scalar \\
+$C,S,G$ & content, style, generated images & images \\
+$A_C^{[l]}$ & content activation at layer $l$ & layer tensor \\
+$A_G^{[l]}$ & generated activation at layer $l$ & layer tensor \\
+$F^{[l]}$ & reshaped style features & $\R^{n_C^{[l]} \times (n_H^{[l]}n_W^{[l]})}$ \\
+$G^{[l]}$ & Gram matrix & $\R^{n_C^{[l]} \times n_C^{[l]}}$ \\
+$G_S^{[l]}$ & style-image Gram matrix & $\R^{n_C^{[l]} \times n_C^{[l]}}$ \\
+$G_G^{[l]}$ & generated-image Gram matrix & $\R^{n_C^{[l]} \times n_C^{[l]}}$ \\
+$\cost_{\mathrm{content}}$ & content cost & scalar \\
+$\cost_{\mathrm{style}}$ & style cost & scalar \\
+$\lambda_l$ & style-layer weight & scalar \\
+$\alpha,\beta$ in style transfer & objective weights & scalars \\
+\bottomrule
+\end{tabular}
+\end{center}
+\Notes{$\alpha$ in triplet loss is a margin. $\alpha,\beta$ in style transfer are objective weights. These are not the optimizer learning rate unless explicitly stated.}

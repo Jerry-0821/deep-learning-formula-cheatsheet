@@ -1,0 +1,165 @@
+\section{Regularization}
+
+\subsection{L2 Regularized Cost}
+
+\FormulaName{L2-regularized objective}
+\[
+\cost_{\mathrm{reg}}
+=
+\cost
++
+\frac{\lambda}{2m}
+\sum_{l=1}^{L}
+\left\lVert W^{[l]} \right\rVert_F^2.
+\]
+\[
+\left\lVert W^{[l]} \right\rVert_F^2
+=
+\sum_{i,j}
+\left(W_{ij}^{[l]}\right)^2.
+\]
+\Use{L2-regularized objective.}
+\Notes{Bias terms are usually not included in this penalty.}
+
+\subsection{L2 Gradient Term}
+
+\FormulaName{Regularized weight gradient}
+\[
+dW_{\mathrm{reg}}^{[l]}
+=
+dW^{[l]}
++
+\frac{\lambda}{m}
+W^{[l]}.
+\]
+\[
+dW_{\mathrm{reg}}^{[l]}, dW^{[l]}, W^{[l]}
+\in
+\R^{n^{[l]} \times n^{[l-1]}}.
+\]
+\Use{Gradient update with L2 penalty.}
+
+\subsection{Weight Decay Form}
+
+\FormulaName{Weight update with L2 term}
+\[
+W^{[l]}
+\leftarrow
+W^{[l]}
+-
+\alpha
+\left(
+dW^{[l]}
++
+\frac{\lambda}{m}W^{[l]}
+\right).
+\]
+\Use{L2 penalty in gradient step.}
+
+\FormulaName{Equivalent shrinkage form}
+\[
+W^{[l]}
+\leftarrow
+\left(1-\alpha\frac{\lambda}{m}\right)W^{[l]}
+-
+\alpha dW^{[l]}.
+\]
+\Use{L2 regularization as multiplicative weight shrinkage.}
+
+\subsection{Dropout Mask}
+
+\FormulaName{Bernoulli mask}
+\[
+D^{[l]} \sim \operatorname{Bernoulli}(p_{\mathrm{keep}}),
+\qquad
+D^{[l]} \in \{0,1\}^{n^{[l]} \times m}.
+\]
+\Use{Dropout mask for layer $l$.}
+\Notes{Entries of $D^{[l]}$ are sampled elementwise.}
+
+\subsection{Inverted Dropout Forward Pass}
+
+\FormulaName{Inverted dropout}
+\[
+\widetilde{A}^{[l]}
+=
+D^{[l]} \hadamard A^{[l]}.
+\]
+\[
+A_{\mathrm{drop}}^{[l]}
+=
+\frac{\widetilde{A}^{[l]}}{p_{\mathrm{keep}}}
+=
+\frac{D^{[l]} \hadamard A^{[l]}}{p_{\mathrm{keep}}}.
+\]
+\[
+A^{[l]}, D^{[l]}, A_{\mathrm{drop}}^{[l]}
+\in
+\R^{n^{[l]} \times m}.
+\]
+\Use{Inverted dropout during training.}
+
+\subsection{Dropout Train/Test Convention}
+
+\FormulaName{Training}
+\[
+A^{[l]}
+\leftarrow
+\frac{D^{[l]} \hadamard A^{[l]}}{p_{\mathrm{keep}}}.
+\]
+\Use{Training-time inverted dropout scaling.}
+
+\FormulaName{Test / inference}
+\[
+A_{\mathrm{test}}^{[l]}
+=
+A^{[l]}.
+\]
+\Use{Inference-time activation convention.}
+
+\subsection{Other Regularization Labels}
+
+\begin{center}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.22\linewidth}
+                >{\raggedright\arraybackslash}p{0.42\linewidth}
+                >{\raggedright\arraybackslash}p{0.22\linewidth}}
+\toprule
+Method & Formula / Label & Use \\
+\midrule
+Early stopping &
+\(\displaystyle \text{stop at } \argmin_t \cost_{\mathrm{dev}}(t)\) &
+Dev-set selection rule \\
+\addlinespace
+Data augmentation &
+\(\displaystyle (x,y) \mapsto (T(x),y)\) &
+Label-preserving transform \\
+\bottomrule
+\end{tabular}
+\end{center}
+\Notes{$T$ is a label-preserving transformation.}
+
+\subsection{Regularization Symbol Table}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Symbol & Meaning & Shape / Type \\
+\midrule
+$\cost$ & unregularized cost & scalar \\
+$\cost_{\mathrm{reg}}$ & regularized cost & scalar \\
+$\lambda$ & regularization strength & $\R_{\ge 0}$ \\
+$m$ & batch size & $\mathbb{N}$ \\
+$L$ & number of layers & $\mathbb{N}$ \\
+$W^{[l]}$ & layer weights & $\R^{n^{[l]} \times n^{[l-1]}}$ \\
+$\left\lVert W^{[l]} \right\rVert_F^2$ & squared Frobenius norm & scalar \\
+$dW_{\mathrm{reg}}^{[l]}$ & regularized weight gradient & $\R^{n^{[l]} \times n^{[l-1]}}$ \\
+$\alpha$ & learning rate & scalar \\
+$D^{[l]}$ & dropout mask & $\{0,1\}^{n^{[l]} \times m}$ \\
+$p_{\mathrm{keep}}$ & keep probability & $(0,1]$ \\
+$A^{[l]}$ & activation & $\R^{n^{[l]} \times m}$ \\
+$A_{\mathrm{drop}}^{[l]}$ & dropout-scaled activation & $\R^{n^{[l]} \times m}$ \\
+$\cost_{\mathrm{dev}}(t)$ & dev cost at step $t$ & scalar \\
+$T(x)$ & transformed input & same label as $x$ \\
+\bottomrule
+\end{tabular}
+\end{center}

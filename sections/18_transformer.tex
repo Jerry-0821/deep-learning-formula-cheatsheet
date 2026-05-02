@@ -1,0 +1,480 @@
+\section{Transformer and Self-Attention}
+
+\subsection{Token Representation and Q/K/V Projections}
+
+\FormulaName{Input sequence representation}
+\[
+X \in \R^{T \times d_{\mathrm{model}}}.
+\]
+\FormulaName{Projection matrices}
+\[
+W_Q \in \R^{d_{\mathrm{model}} \times d_k},
+\qquad
+W_K \in \R^{d_{\mathrm{model}} \times d_k},
+\qquad
+W_V \in \R^{d_{\mathrm{model}} \times d_v}.
+\]
+\FormulaName{Single-head projections}
+\[
+Q = XW_Q,
+\qquad
+K = XW_K,
+\qquad
+V = XW_V.
+\]
+\[
+Q,K \in \R^{T \times d_k},
+\qquad
+V \in \R^{T \times d_v}.
+\]
+\FormulaName{Cross-attention shapes}
+\[
+Q \in \R^{T_q \times d_k},
+\qquad
+K \in \R^{T_k \times d_k},
+\qquad
+V \in \R^{T_k \times d_v}.
+\]
+\Use{Linear projections for attention.}
+
+\subsection{Scaled Dot-Product Attention}
+
+\FormulaName{Attention scores}
+\[
+S
+=
+\frac{QK\transpose}{\sqrt{d_k}}.
+\]
+\FormulaName{Attention weights}
+\[
+P
+=
+\softmax(S).
+\]
+\FormulaName{Attention output}
+\[
+O
+=
+PV.
+\]
+\FormulaName{Full attention formula}
+\[
+\operatorname{Attention}(Q,K,V)
+=
+\softmax
+\left(
+\frac{QK\transpose}{\sqrt{d_k}}
+\right)
+V.
+\]
+\Use{Scaled dot-product attention.}
+
+\subsection{Attention Shape Check}
+
+\FormulaName{Score shape}
+\[
+QK\transpose:
+(T_q \times d_k)(d_k \times T_k)
+\to
+T_q \times T_k.
+\]
+\[
+S,P \in \R^{T_q \times T_k}.
+\]
+\FormulaName{Output shape}
+\[
+PV:
+(T_q \times T_k)(T_k \times d_v)
+\to
+T_q \times d_v.
+\]
+\[
+O \in \R^{T_q \times d_v}.
+\]
+\Use{Attention dimension check.}
+
+\subsection{Causal Mask}
+
+\FormulaName{Masked scores}
+\[
+S_{\mathrm{mask}}
+=
+S+M.
+\]
+\[
+T_q=T_k=T,
+\qquad
+M \in \R^{T \times T}
+\quad
+\text{for decoder self-attention}.
+\]
+\[
+M_{ij}
+=
+\begin{cases}
+0, & j \leq i, \\
+-\infty, & j > i.
+\end{cases}
+\]
+\FormulaName{Masked attention weights}
+\[
+P
+=
+\softmax(S_{\mathrm{mask}}).
+\]
+\Use{Prevent attention to future tokens.}
+\Notes{Used in autoregressive decoder self-attention.}
+
+\subsection{Multi-Head Attention}
+
+\FormulaName{Head projections}
+\[
+Q_r = XW_Q^{(r)},
+\qquad
+K_r = XW_K^{(r)},
+\qquad
+V_r = XW_V^{(r)}.
+\]
+\Use{Self-attention head projections.}
+\[
+W_Q^{(r)},W_K^{(r)}
+\in
+\R^{d_{\mathrm{model}} \times d_k},
+\qquad
+W_V^{(r)}
+\in
+\R^{d_{\mathrm{model}} \times d_v}.
+\]
+\FormulaName{Attention head}
+\[
+\operatorname{head}_r
+=
+\operatorname{Attention}
+\left(
+Q_r,K_r,V_r
+\right),
+\qquad
+r=1,\dots,h.
+\]
+\[
+\operatorname{head}_r
+\in
+\R^{T \times d_v}.
+\]
+\FormulaName{Head concatenation}
+\[
+H
+=
+\operatorname{Concat}
+\left(
+\operatorname{head}_1,\dots,\operatorname{head}_h
+\right).
+\]
+\[
+H \in \R^{T \times (h d_v)}.
+\]
+\Use{Parallel attention heads.}
+
+\subsection{Output Projection}
+
+\FormulaName{Multi-head output projection}
+\[
+\operatorname{MHA}(X)
+=
+H W_O.
+\]
+\[
+W_O
+\in
+\R^{h d_v \times d_{\mathrm{model}}},
+\qquad
+\operatorname{MHA}(X)
+\in
+\R^{T \times d_{\mathrm{model}}}.
+\]
+\FormulaName{Combined multi-head formula}
+\[
+\operatorname{MultiHead}(Q,K,V)
+=
+\operatorname{Concat}
+(\operatorname{head}_1,\dots,\operatorname{head}_h)W_O.
+\]
+\Use{Project concatenated heads back to model width.}
+
+\subsection{Position-wise Feed-Forward Network}
+
+\FormulaName{Token-wise FFN}
+\[
+x \in \R^{1 \times d_{\mathrm{model}}}.
+\]
+\[
+\operatorname{FFN}(x)
+=
+\phi
+\left(
+xW_1+b_1\transpose
+\right)
+W_2
++
+b_2\transpose.
+\]
+\[
+b_1\transpose \in \R^{1 \times d_{\mathrm{ff}}},
+\qquad
+b_2\transpose \in \R^{1 \times d_{\mathrm{model}}}.
+\]
+\FormulaName{Sequence FFN}
+\[
+\operatorname{FFN}(X)
+=
+\phi
+\left(
+XW_1+\mathbf{1}b_1\transpose
+\right)
+W_2
++
+\mathbf{1}b_2\transpose.
+\]
+\[
+\mathbf{1}\in\R^{T \times 1},
+\qquad
+\mathbf{1}b_1\transpose \in \R^{T \times d_{\mathrm{ff}}},
+\qquad
+\mathbf{1}b_2\transpose \in \R^{T \times d_{\mathrm{model}}}.
+\]
+\[
+W_1 \in \R^{d_{\mathrm{model}} \times d_{\mathrm{ff}}},
+\qquad
+b_1 \in \R^{d_{\mathrm{ff}} \times 1}.
+\]
+\[
+W_2 \in \R^{d_{\mathrm{ff}} \times d_{\mathrm{model}}},
+\qquad
+b_2 \in \R^{d_{\mathrm{model}} \times 1}.
+\]
+\[
+\operatorname{FFN}(X)
+\in
+\R^{T \times d_{\mathrm{model}}}.
+\]
+\Use{Token-wise feed-forward transformation.}
+\Notes{Token-wise FFN uses row-vector convention; $\phi$ is often ReLU or GELU.}
+
+\subsection{Positional Encoding}
+
+\FormulaName{Input with position information}
+\[
+X_{\mathrm{pos}}
+=
+X_{\mathrm{emb}}
++
+P_{\mathrm{pos}}.
+\]
+\[
+X_{\mathrm{emb}},
+P_{\mathrm{pos}},
+X_{\mathrm{pos}}
+\in
+\R^{T \times d_{\mathrm{model}}}.
+\]
+\FormulaName{Sinusoidal positional encoding}
+\[
+PE_{\mathrm{pos},2i}
+=
+\sin
+\left(
+\frac{\mathrm{pos}}{10000^{2i/d_{\mathrm{model}}}}
+\right).
+\]
+\[
+PE_{\mathrm{pos},2i+1}
+=
+\cos
+\left(
+\frac{\mathrm{pos}}{10000^{2i/d_{\mathrm{model}}}}
+\right).
+\]
+\Use{Inject token-position information.}
+
+\subsection{Residual Connection and Layer Normalization}
+
+\FormulaName{Layer normalization}
+\[
+\operatorname{LayerNorm}(x)
+=
+\gamma
+\hadamard
+\frac{x-\mu}{\sqrt{\sigma^2+\epsilon}}
++
+\beta.
+\]
+\[
+x \in \R^{1 \times d_{\mathrm{model}}},
+\qquad
+\gamma,\beta \in \R^{1 \times d_{\mathrm{model}}}.
+\]
+\[
+X \in \R^{T \times d_{\mathrm{model}}},
+\qquad
+(T \times d_{\mathrm{model}})
+\hadamard
+(1 \times d_{\mathrm{model}})
+\to
+T \times d_{\mathrm{model}}.
+\]
+\FormulaName{Post-norm residual}
+\[
+Y
+=
+\operatorname{LayerNorm}
+\left(
+X+\operatorname{Sublayer}(X)
+\right).
+\]
+\FormulaName{Pre-norm residual}
+\[
+Y
+=
+X
++
+\operatorname{Sublayer}
+\left(
+\operatorname{LayerNorm}(X)
+\right).
+\]
+\Use{Residual connection with normalization.}
+\Notes{Original Transformer commonly uses post-norm; many modern Transformers use pre-norm.}
+
+\subsection{Transformer Block Pipeline}
+
+\FormulaName{Encoder block, post-norm}
+\[
+H_1
+=
+\operatorname{LayerNorm}
+\left(
+X+
+\operatorname{MHA}(X)
+\right).
+\]
+\[
+H_2
+=
+\operatorname{LayerNorm}
+\left(
+H_1+
+\operatorname{FFN}(H_1)
+\right).
+\]
+\FormulaName{Decoder block labels}
+\[
+X
+\to
+\operatorname{MaskedMHA}
+\to
+\operatorname{CrossAttention}
+\to
+\operatorname{FFN}.
+\]
+\FormulaName{Cross-attention projections}
+\[
+Q = X_{\mathrm{dec}}W_Q,
+\qquad
+K = X_{\mathrm{enc}}W_K,
+\qquad
+V = X_{\mathrm{enc}}W_V.
+\]
+\[
+X_{\mathrm{dec}} \in \R^{T_q \times d_{\mathrm{model}}},
+\qquad
+X_{\mathrm{enc}} \in \R^{T_k \times d_{\mathrm{model}}}.
+\]
+\[
+Q \in \R^{T_q \times d_k},
+\qquad
+K \in \R^{T_k \times d_k},
+\qquad
+V \in \R^{T_k \times d_v}.
+\]
+\Use{Transformer block computation pattern.}
+
+\subsection{Transformer Symbol Table}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Symbol & Meaning & Shape / Type \\
+\midrule
+$X$ & token representation matrix & $\R^{T \times d_{\mathrm{model}}}$ \\
+$X_{\mathrm{dec}}$ & decoder token representations & $\R^{T_q \times d_{\mathrm{model}}}$ \\
+$X_{\mathrm{enc}}$ & encoder token representations & $\R^{T_k \times d_{\mathrm{model}}}$ \\
+$X_{\mathrm{emb}}$ & token embedding sequence & $\R^{T \times d_{\mathrm{model}}}$ \\
+$P_{\mathrm{pos}}$ & positional encoding & $\R^{T \times d_{\mathrm{model}}}$ \\
+$X_{\mathrm{pos}}$ & position-aware input & $\R^{T \times d_{\mathrm{model}}}$ \\
+$Q$ & query matrix & $\R^{T_q \times d_k}$ \\
+$K$ & key matrix & $\R^{T_k \times d_k}$ \\
+$V$ & value matrix & $\R^{T_k \times d_v}$ \\
+$S$ & attention scores & $\R^{T_q \times T_k}$ \\
+$P$ & attention weights & $\R^{T_q \times T_k}$ \\
+$O$ & attention output & $\R^{T_q \times d_v}$ \\
+$T$ & sequence length & $\mathbb{N}$ \\
+$T_q$ & query length & $\mathbb{N}$ \\
+$T_k$ & key/value length & $\mathbb{N}$ \\
+$d_{\mathrm{model}}$ & model width & $\mathbb{N}$ \\
+$d_k$ & query/key width & $\mathbb{N}$ \\
+$d_v$ & value width & $\mathbb{N}$ \\
+$h$ & number of heads & $\mathbb{N}$ \\
+$H$ & concatenated multi-head output & $\R^{T \times (h d_v)}$ \\
+$W_Q,W_K,W_V$ & projection matrices & see shape table \\
+$W_O$ & output projection & $\R^{h d_v \times d_{\mathrm{model}}}$ \\
+$W_1,W_2$ & FFN weights & see shape table \\
+$b_1,b_2$ & FFN biases & see shape table \\
+$\mathbf{1}$ & all-ones column vector & $\R^{T \times 1}$ \\
+$d_{\mathrm{ff}}$ & FFN hidden width & $\mathbb{N}$ \\
+$M$ & causal mask & $\R^{T \times T}$ for decoder self-attention \\
+$\gamma,\beta$ & LayerNorm scale / shift & feature-wise parameters \\
+$\epsilon$ & denominator stabilizer & scalar \\
+$\phi$ & FFN nonlinearity & function \\
+\bottomrule
+\end{tabular}
+\end{center}
+\Notes{$P$ denotes attention weights; $P_{\mathrm{pos}}$ denotes positional encoding. LayerNorm $\beta$ is not Adam $\beta$.}
+
+\subsection{Shape Reference Table}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Quantity & Shape \\
+\midrule
+$X$ & $T \times d_{\mathrm{model}}$ \\
+$X_{\mathrm{dec}}$ & $T_q \times d_{\mathrm{model}}$ \\
+$X_{\mathrm{enc}}$ & $T_k \times d_{\mathrm{model}}$ \\
+$Q,K$ & $T \times d_k$ \\
+$V$ & $T \times d_v$ \\
+$Q$ (cross-attention) & $T_q \times d_k$ \\
+$K,V$ (cross-attention) & $T_k \times d_k,\ T_k \times d_v$ \\
+$S,P$ & $T_q \times T_k$ \\
+$O$ & $T_q \times d_v$ \\
+$\operatorname{head}_r$ & $T \times d_v$ \\
+$H$ & $T \times (h d_v)$ \\
+$W_O$ & $h d_v \times d_{\mathrm{model}}$ \\
+$\operatorname{MHA}(X)$ & $T \times d_{\mathrm{model}}$ \\
+$Q$ (batch) & $m \times T_q \times d_k$ \\
+$K$ (batch) & $m \times T_k \times d_k$ \\
+$V$ (batch) & $m \times T_k \times d_v$ \\
+$Q$ (multi-head batch) & $m \times h \times T_q \times d_k$ \\
+$K$ (multi-head batch) & $m \times h \times T_k \times d_k$ \\
+$V$ (multi-head batch) & $m \times h \times T_k \times d_v$ \\
+$W_1$ & $d_{\mathrm{model}} \times d_{\mathrm{ff}}$ \\
+$W_2$ & $d_{\mathrm{ff}} \times d_{\mathrm{model}}$ \\
+$b_1$ & $d_{\mathrm{ff}} \times 1$ \\
+$b_2$ & $d_{\mathrm{model}} \times 1$ \\
+$\mathbf{1}$ & $T \times 1$ \\
+$\mathbf{1}b_1\transpose$ & $T \times d_{\mathrm{ff}}$ \\
+$\mathbf{1}b_2\transpose$ & $T \times d_{\mathrm{model}}$ \\
+$M$ & $T \times T$ for causal self-attention \\
+$X_{\mathrm{emb}},P_{\mathrm{pos}},X_{\mathrm{pos}}$ & $T \times d_{\mathrm{model}}$ \\
+\bottomrule
+\end{tabular}
+\end{center}

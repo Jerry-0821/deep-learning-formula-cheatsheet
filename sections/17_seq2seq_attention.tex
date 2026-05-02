@@ -1,0 +1,351 @@
+\section{Seq2Seq, Beam Search, and Attention}
+
+\subsection{Conditional Sequence Probability}
+
+\FormulaName{Autoregressive probability}
+\[
+P(y \given x)
+=
+\prod_{\tau=1}^{T_y}
+P
+\left(
+y^{\langle \tau\rangle}
+\given
+y^{\langle 1:\tau-1\rangle},
+x
+\right).
+\]
+\FormulaName{Log probability}
+\[
+\log P(y \given x)
+=
+\sum_{\tau=1}^{T_y}
+\log
+P
+\left(
+y^{\langle \tau\rangle}
+\given
+y^{\langle 1:\tau-1\rangle},
+x
+\right).
+\]
+\Use{Autoregressive sequence probability.}
+
+\subsection{Encoder-Decoder State Notation}
+
+\FormulaName{Encoder states}
+\[
+a^{\langle 1\rangle},\dots,a^{\langle T_x\rangle},
+\qquad
+a^{\langle t'\rangle}
+\in
+\R^{n_a \times m}.
+\]
+\FormulaName{Decoder state and output}
+\[
+s^{\langle t\rangle}
+\in
+\R^{n_s \times m}.
+\]
+\[
+\hat{y}^{\langle t\rangle}
+=
+\softmax
+\left(
+W_y s^{\langle t\rangle}
++
+b_y
+\right).
+\]
+\[
+\hat{y}^{\langle t\rangle}
+\in
+\R^{n_y \times m}.
+\]
+\Use{Encoder-decoder state notation.}
+
+\subsection{Greedy Decoding}
+
+\FormulaName{Greedy token choice}
+\[
+\hat{w}^{\langle t\rangle}
+=
+\argmax_{w \in V}
+P
+\left(
+w
+\given
+\hat{w}^{\langle 1:t-1\rangle},
+x
+\right).
+\]
+\Use{Greedy token selection.}
+
+\subsection{Beam Search Score}
+
+\FormulaName{Candidate sequence score}
+\[
+\operatorname{score}(y)
+=
+\sum_{\tau=1}^{T_y}
+\log
+P
+\left(
+y^{\langle \tau\rangle}
+\given
+y^{\langle 1:\tau-1\rangle},
+x
+\right).
+\]
+\FormulaName{Beam selection}
+\[
+\mathcal{B}^{\langle t\rangle}
+=
+\operatorname{TopK}_{y^{\langle 1:t\rangle}}
+\operatorname{score}
+\left(
+y^{\langle 1:t\rangle}
+\right).
+\]
+\Use{Keep top $K$ partial sequences.}
+
+\subsection{Length Normalization}
+
+\FormulaName{Length-normalized score}
+\[
+\operatorname{score}_{\mathrm{norm}}(y)
+=
+\frac{1}{T_y^{\alpha}}
+\sum_{\tau=1}^{T_y}
+\log
+P
+\left(
+y^{\langle \tau\rangle}
+\given
+y^{\langle 1:\tau-1\rangle},
+x
+\right).
+\]
+\Use{Beam-search score with length penalty.}
+\Notes{$\alpha$ here is a length-normalization exponent, not the optimizer learning rate.}
+
+\subsection{Attention Energy}
+
+\FormulaName{Additive attention energy}
+\[
+e^{\langle t,t'\rangle}
+=
+v_a\transpose
+\tanh
+\left(
+W_s s^{\langle t-1\rangle}
++
+W_a a^{\langle t'\rangle}
++
+b_a
+\right).
+\]
+\[
+s^{\langle t-1\rangle}
+\in
+\R^{n_s \times m},
+\qquad
+a^{\langle t'\rangle}
+\in
+\R^{n_a \times m}.
+\]
+\[
+e^{\langle t,t'\rangle}
+\in
+\R^{1 \times m}.
+\]
+\[
+W_s \in \R^{n_e \times n_s},
+\qquad
+W_a \in \R^{n_e \times n_a},
+\qquad
+b_a \in \R^{n_e \times 1},
+\qquad
+v_a \in \R^{n_e \times 1}.
+\]
+\Use{Alignment score between decoder step $\langle t\rangle$ and encoder step $\langle t'\rangle$.}
+
+\subsection{Attention Weights}
+
+\FormulaName{Attention distribution}
+\[
+\alpha^{\langle t,t'\rangle}
+=
+\frac{
+\exp(e^{\langle t,t'\rangle})
+}{
+\sum_{j=1}^{T_x}
+\exp(e^{\langle t,j\rangle})
+}.
+\]
+\[
+\sum_{t'=1}^{T_x}
+\alpha^{\langle t,t'\rangle}
+=
+1.
+\]
+\Use{Attention distribution over encoder time steps.}
+\Notes{$\alpha^{\langle t,t'\rangle}$ is an attention weight, not the optimizer learning rate.}
+
+\subsection{Context Vector}
+
+\FormulaName{Attention context}
+\[
+c^{\langle t\rangle}
+=
+\sum_{t'=1}^{T_x}
+\alpha^{\langle t,t'\rangle}
+a^{\langle t'\rangle}.
+\]
+\[
+c^{\langle t\rangle}
+\in
+\R^{n_a \times m}.
+\]
+\[
+\alpha^{\langle t,t'\rangle}
+\in
+\R^{1 \times m},
+\qquad
+a^{\langle t'\rangle}
+\in
+\R^{n_a \times m}.
+\]
+\[
+(1 \times m) \hadamard (n_a \times m)
+\to
+n_a \times m.
+\]
+\Use{Weighted encoder summary for decoder step $\langle t\rangle$.}
+
+\subsection{Attention Decoder Step}
+
+\FormulaName{Decoder update}
+\[
+s^{\langle t\rangle}
+=
+\operatorname{RNN}_{\mathrm{dec}}
+\left(
+s^{\langle t-1\rangle},
+c^{\langle t\rangle},
+y^{\langle t-1\rangle}
+\right).
+\]
+\FormulaName{Decoder output}
+\[
+\hat{y}^{\langle t\rangle}
+=
+\softmax
+\left(
+W_y s^{\langle t\rangle}
++
+b_y
+\right).
+\]
+\[
+W_y \in \R^{n_y \times n_s},
+\qquad
+b_y \in \R^{n_y \times 1},
+\qquad
+\hat{y}^{\langle t\rangle}
+\in
+\R^{n_y \times m}.
+\]
+\FormulaName{Context-output variant}
+\[
+\hat{y}^{\langle t\rangle}
+=
+\softmax
+\left(
+W_o
+\begin{bmatrix}
+s^{\langle t\rangle}\\
+c^{\langle t\rangle}
+\end{bmatrix}
++
+b_o
+\right).
+\]
+\[
+\begin{bmatrix}
+s^{\langle t\rangle}\\
+c^{\langle t\rangle}
+\end{bmatrix}
+\in
+\R^{(n_s+n_a)\times m}.
+\]
+\[
+W_o \in \R^{n_y \times (n_s+n_a)},
+\qquad
+b_o \in \R^{n_y \times 1}.
+\]
+\Use{Attention-based decoder step.}
+
+\subsection{Seq2Seq / Attention Symbol Table}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Symbol & Meaning & Shape / Type \\
+\midrule
+$x$ & input sequence & length $T_x$ \\
+$y$ & output sequence & length $T_y$ \\
+$T_x$ & input sequence length & $\mathbb{N}$ \\
+$T_y$ & output sequence length & $\mathbb{N}$ \\
+$a^{\langle t'\rangle}$ & encoder hidden state & $\R^{n_a \times m}$ \\
+$s^{\langle t\rangle}$ & decoder hidden state & $\R^{n_s \times m}$ \\
+$y^{\langle t\rangle}$ & output token / target & token or one-hot vector \\
+$\hat{w}^{\langle t\rangle}$ & predicted token at step $\langle t\rangle$ & token in $V$ \\
+$\hat{y}^{\langle t\rangle}$ & predicted output distribution & $\R^{n_y \times m}$ \\
+$K$ & beam width & $\mathbb{N}$ \\
+$\mathcal{B}^{\langle t\rangle}$ & beam set at step $\langle t\rangle$ & set of $K$ partial sequences \\
+$\operatorname{score}(y)$ & sequence log score & scalar \\
+$\operatorname{score}_{\mathrm{norm}}(y)$ & length-normalized score & scalar \\
+$\alpha$ & length-normalization exponent & scalar \\
+$e^{\langle t,t'\rangle}$ & attention energy & $\R^{1 \times m}$ \\
+$\alpha^{\langle t,t'\rangle}$ & attention weight & $\R^{1 \times m}$ \\
+$c^{\langle t\rangle}$ & context vector & $\R^{n_a \times m}$ \\
+$W_s$ & decoder-state attention weights & $\R^{n_e \times n_s}$ \\
+$W_a$ & encoder-state attention weights & $\R^{n_e \times n_a}$ \\
+$v_a$ & attention scoring vector & $\R^{n_e \times 1}$ \\
+$W_y$ & decoder output weights & $\R^{n_y \times n_s}$ \\
+$b_y$ & decoder output bias & $\R^{n_y \times 1}$ \\
+$W_o$ & context-output weights & $\R^{n_y \times (n_s+n_a)}$ \\
+$b_o$ & context-output bias & $\R^{n_y \times 1}$ \\
+$n_s$ & decoder hidden-state dimension & $\mathbb{N}$ \\
+$n_a$ & encoder hidden-state dimension & $\mathbb{N}$ \\
+$n_e$ & attention hidden dimension & $\mathbb{N}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\Notes{$\alpha$ is a length exponent; $\alpha^{\langle t,t'\rangle}$ is an attention weight; neither is the optimizer learning rate unless stated.}
+
+\subsection{Shape Reference Table}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Quantity & Shape \\
+\midrule
+$a^{\langle t'\rangle}$ & $n_a \times m$ \\
+$s^{\langle t\rangle}$ & $n_s \times m$ \\
+$e^{\langle t,t'\rangle}$ & $1 \times m$ \\
+$\alpha^{\langle t,t'\rangle}$ & $1 \times m$ \\
+$c^{\langle t\rangle}$ & $n_a \times m$ \\
+$W_s$ & $n_e \times n_s$ \\
+$W_a$ & $n_e \times n_a$ \\
+$v_a$ & $n_e \times 1$ \\
+$W_y$ & $n_y \times n_s$ \\
+$b_y$ & $n_y \times 1$ \\
+$W_o$ & $n_y \times (n_s+n_a)$ \\
+$b_o$ & $n_y \times 1$ \\
+$\begin{bmatrix}s^{\langle t\rangle}\\ c^{\langle t\rangle}\end{bmatrix}$ & $(n_s+n_a) \times m$ \\
+$\hat{y}^{\langle t\rangle}$ & $n_y \times m$ \\
+\bottomrule
+\end{tabular}
+\end{center}

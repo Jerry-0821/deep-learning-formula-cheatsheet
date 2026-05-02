@@ -1,0 +1,200 @@
+\section{ML Strategy Formula Appendix}
+
+\subsection{Confusion Matrix Quantities}
+
+\FormulaName{Binary classification count labels}
+\[
+TP=\text{true positives},
+\qquad
+FP=\text{false positives}.
+\]
+\[
+TN=\text{true negatives},
+\qquad
+FN=\text{false negatives}.
+\]
+\Use{Binary classification count labels.}
+
+\subsection{Classification Metrics}
+
+\FormulaName{Accuracy}
+\[
+\mathrm{Accuracy}
+=
+\frac{TP+TN}{TP+TN+FP+FN}.
+\]
+\FormulaName{Precision}
+\[
+\mathrm{Precision}
+=
+\frac{TP}{TP+FP}.
+\]
+\FormulaName{Recall}
+\[
+\mathrm{Recall}
+=
+\frac{TP}{TP+FN}.
+\]
+\FormulaName{F1 score}
+\[
+F_1
+=
+\frac{2\cdot \mathrm{Precision}\cdot \mathrm{Recall}}
+{\mathrm{Precision}+\mathrm{Recall}}.
+\]
+\FormulaName{Equivalent F1}
+\[
+F_1
+=
+\frac{2TP}{2TP+FP+FN}.
+\]
+\Use{Classification evaluation metrics.}
+
+\subsection{Error Rate}
+
+\FormulaName{Error from accuracy}
+\[
+\mathrm{Error}
+=
+1-\mathrm{Accuracy}.
+\]
+\FormulaName{Binary classification error}
+\[
+\mathrm{Error}
+=
+\frac{1}{m}
+\sum_{i=1}^{m}
+\mathbf{1}
+\left[
+\hat{y}^{(i)} \neq y^{(i)}
+\right].
+\]
+\Use{Misclassification rate.}
+
+\subsection{Bias / Variance Gap Labels}
+
+\FormulaName{Error labels}
+\[
+E_{\mathrm{train}}=\text{training error},
+\qquad
+E_{\mathrm{dev}}=\text{development-set error}.
+\]
+\[
+E_{\mathrm{human}}=\text{human-level error}.
+\]
+\FormulaName{Avoidable bias gap}
+\[
+\Delta_{\mathrm{bias}}
+=
+E_{\mathrm{train}}-E_{\mathrm{human}}.
+\]
+\FormulaName{Variance gap}
+\[
+\Delta_{\mathrm{variance}}
+=
+E_{\mathrm{dev}}-E_{\mathrm{train}}.
+\]
+\Use{Bias / variance diagnostic gaps.}
+\Notes{Replace $E_{\mathrm{human}}$ with a baseline error when human-level error is not applicable.}
+
+\subsection{Data Mismatch Gap}
+
+\FormulaName{Train-dev and dev errors}
+\[
+E_{\mathrm{train-dev}}=\text{train-dev error},
+\qquad
+E_{\mathrm{dev}}=\text{development-set error}.
+\]
+\FormulaName{Data mismatch gap}
+\[
+\Delta_{\mathrm{mismatch}}
+=
+E_{\mathrm{dev}}-E_{\mathrm{train-dev}}.
+\]
+\Use{Distribution mismatch diagnostic gap.}
+
+\subsection{Error Analysis Fraction}
+
+\FormulaName{Category error fraction}
+\[
+r_c
+=
+\frac{N_c}{N_{\mathrm{error}}}.
+\]
+\[
+N_c=\text{number of errors in category }c,
+\qquad
+N_{\mathrm{error}}=\text{total number of analyzed errors}.
+\]
+\Use{Fraction of errors explained by category $c$.}
+
+\subsection{Train / Dev / Test Split Notation}
+
+\FormulaName{Dataset splits}
+\[
+\mathcal{D}_{\mathrm{train}},
+\qquad
+\mathcal{D}_{\mathrm{dev}},
+\qquad
+\mathcal{D}_{\mathrm{test}}.
+\]
+\FormulaName{Split sizes}
+\[
+m_{\mathrm{train}}
+=
+\lvert \mathcal{D}_{\mathrm{train}}\rvert,
+\qquad
+m_{\mathrm{dev}}
+=
+\lvert \mathcal{D}_{\mathrm{dev}}\rvert,
+\qquad
+m_{\mathrm{test}}
+=
+\lvert \mathcal{D}_{\mathrm{test}}\rvert.
+\]
+\FormulaName{Empirical risk on split $S$}
+\[
+\widehat{R}_S(f)
+=
+\frac{1}{m_S}
+\sum_{(x^{(i)},y^{(i)})\in \mathcal{D}_S}
+\loss
+\left(
+f(x^{(i)}),y^{(i)}
+\right).
+\]
+\Use{Dataset split and empirical-risk notation.}
+
+\subsection{ML Strategy Symbol Table}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Symbol & Meaning & Type \\
+\midrule
+$TP$ & true positives & count \\
+$FP$ & false positives & count \\
+$TN$ & true negatives & count \\
+$FN$ & false negatives & count \\
+$\mathrm{Accuracy}$ & correct classification fraction & scalar \\
+$\mathrm{Precision}$ & positive prediction correctness & scalar \\
+$\mathrm{Recall}$ & positive class coverage & scalar \\
+$F_1$ & harmonic mean of precision and recall & scalar \\
+$E_{\mathrm{train}}$ & training error & scalar \\
+$E_{\mathrm{dev}}$ & development-set error & scalar \\
+$E_{\mathrm{test}}$ & test-set error & scalar \\
+$E_{\mathrm{human}}$ & human-level error & scalar \\
+$E_{\mathrm{train-dev}}$ & train-dev error & scalar \\
+$\Delta_{\mathrm{bias}}$ & avoidable bias gap & scalar \\
+$\Delta_{\mathrm{variance}}$ & variance gap & scalar \\
+$\Delta_{\mathrm{mismatch}}$ & data mismatch gap & scalar \\
+$N_c$ & errors in category $c$ & count \\
+$N_{\mathrm{error}}$ & analyzed errors & count \\
+$r_c$ & error-analysis fraction & scalar \\
+$\mathcal{D}_{\mathrm{train}}$ & training split & dataset \\
+$\mathcal{D}_{\mathrm{dev}}$ & development split & dataset \\
+$\mathcal{D}_{\mathrm{test}}$ & test split & dataset \\
+$\widehat{R}_S(f)$ & empirical risk on split $S$ & scalar \\
+\bottomrule
+\end{tabular}
+\end{center}

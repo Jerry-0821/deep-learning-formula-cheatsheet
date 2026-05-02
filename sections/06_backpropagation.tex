@@ -1,0 +1,134 @@
+\section{Backpropagation}
+
+\subsection{Backward Pipeline}
+
+\FormulaName{Dense-layer reverse flow}
+\[
+dA^{[l]} \to dZ^{[l]} \to dW^{[l]}, db^{[l]} \to dA^{[l-1]}.
+\]
+\Use{Reverse-mode differentiation for dense layers.}
+
+\subsection{Output Layer Simplifications}
+
+\FormulaName{Sigmoid output with binary cross-entropy}
+\[
+dZ^{[L]} = A^{[L]} - Y.
+\]
+\Shapes{$A^{[L]}, Y, dZ^{[L]} \in \R^{1 \times m}$.}
+\Use{Binary output-layer gradient.}
+
+\FormulaName{Softmax output with categorical cross-entropy}
+\[
+dZ^{[L]} = A^{[L]} - Y.
+\]
+\Shapes{$A^{[L]}, Y, dZ^{[L]} \in \R^{K \times m}$.}
+\Use{Multi-class output-layer gradient.}
+\Notes{Same compact form, different output dimension.}
+
+\subsection{General Hidden-Layer Backpropagation}
+
+\FormulaName{Activation gradient}
+\[
+dZ^{[l]}
+=
+dA^{[l]} \hadamard g'^{[l]}(Z^{[l]}).
+\]
+\Shapes{$dA^{[l]}, dZ^{[l]}, Z^{[l]} \in \R^{n^{[l]} \times m}$.}
+\Use{Hidden-layer pre-activation gradient.}
+
+\FormulaName{Previous-activation gradient}
+\[
+dA^{[l-1]}
+=
+(W^{[l]})\transpose dZ^{[l]}.
+\]
+\[
+W^{[l]} \in \R^{n^{[l]} \times n^{[l-1]}},
+\qquad
+dA^{[l-1]} \in \R^{n^{[l-1]} \times m}.
+\]
+\Use{Gradient passed to previous layer.}
+
+\FormulaName{Shape check for $dA^{[l-1]}$}
+\[
+(W^{[l]})\transpose dZ^{[l]}
+:
+(n^{[l-1]} \times n^{[l]})
+\cdot
+(n^{[l]} \times m)
+\to
+n^{[l-1]} \times m.
+\]
+\Use{Backpropagation dimension check.}
+
+\subsection{Parameter Gradients}
+
+\FormulaName{Weight gradient}
+\[
+dW^{[l]}
+=
+\frac{1}{m}
+dZ^{[l]}(A^{[l-1]})\transpose.
+\]
+\Shapes{$dW^{[l]} \in \R^{n^{[l]} \times n^{[l-1]}}$.}
+\Use{Dense-layer weight gradient.}
+
+\FormulaName{Bias gradient}
+\[
+db^{[l]}
+=
+\frac{1}{m}
+\sum_{i=1}^{m}
+dZ^{[l](i)}
+\in
+\R^{n^{[l]} \times 1}.
+\]
+\Use{Dense-layer bias gradient.}
+\Notes{$dZ^{[l](i)}$ is the $i$-th column of $dZ^{[l]}$.}
+
+\FormulaName{Shape check for $dW^{[l]}$}
+\[
+dZ^{[l]}(A^{[l-1]})\transpose
+:
+(n^{[l]} \times m)
+\cdot
+(m \times n^{[l-1]})
+\to
+n^{[l]} \times n^{[l-1]}.
+\]
+\Use{Parameter-gradient dimension check.}
+
+\subsection{Shape Check and Parameter Update Link}
+
+\FormulaName{Basic gradient descent update}
+\[
+\begin{aligned}
+W^{[l]} &\leftarrow W^{[l]} - \alpha dW^{[l]},\\
+b^{[l]} &\leftarrow b^{[l]} - \alpha db^{[l]}.
+\end{aligned}
+\]
+\Shapes{$W^{[l]},dW^{[l]} \in \R^{n^{[l]} \times n^{[l-1]}}$; $b^{[l]},db^{[l]} \in \R^{n^{[l]} \times 1}$.}
+\Use{Basic gradient descent update.}
+
+\subsection{Symbols and Shapes}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Symbol & Meaning & Shape \\
+\midrule
+$A^{[l-1]}$ & previous activation & $\R^{n^{[l-1]} \times m}$ \\
+$Z^{[l]}$ & pre-activation & $\R^{n^{[l]} \times m}$ \\
+$A^{[l]}$ & activation & $\R^{n^{[l]} \times m}$ \\
+$W^{[l]}$ & layer weights & $\R^{n^{[l]} \times n^{[l-1]}}$ \\
+$b^{[l]}$ & layer bias & $\R^{n^{[l]} \times 1}$ \\
+$dA^{[l]}$ & activation gradient & $\R^{n^{[l]} \times m}$ \\
+$dZ^{[l]}$ & pre-activation gradient & $\R^{n^{[l]} \times m}$ \\
+$dW^{[l]}$ & weight gradient & $\R^{n^{[l]} \times n^{[l-1]}}$ \\
+$db^{[l]}$ & bias gradient & $\R^{n^{[l]} \times 1}$ \\
+$g'^{[l]}$ & activation derivative & elementwise map \\
+$m$ & batch size & $\mathbb{N}$ \\
+$n^{[l]}$ & units in layer $l$ & $\mathbb{N}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
