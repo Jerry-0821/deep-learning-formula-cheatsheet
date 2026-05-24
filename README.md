@@ -1,44 +1,66 @@
-# deep-learning-formula-cheatsheet
+# ML & Deep Learning Formula Cheat Sheets
 
-Compact LaTeX formula cheat sheet for deep learning.
+Compact LaTeX formula references for theory-focused machine learning and deep
+learning review.
 
-This repository is intended to produce a clean PDF reference focused on formulas,
-tensor shapes, notation consistency, update rules, common variants, and minimal
-labels. It is not a beginner tutorial and not a long explanation document.
-It is not a textbook. Keep the project formula-focused.
+This repository contains two standalone PDF review sheets designed for quick
+mathematical lookup. They emphasize formulas, notation, objectives, update
+rules, evaluation quantities, model decisions, tensor shapes where relevant,
+and compact derivations without requiring readers to search across full lecture
+notes or textbooks.
+
+The content follows the study-material scope covered by each sheet. It is not
+intended to be an exhaustive textbook-level reference or a universal catalog of
+every machine learning and deep learning topic. Instead, it is a focused
+mathematical review resource for beginners and learners who want to strengthen
+their theoretical foundation.
+
+These sheets are not tutorials and do not replace complete courses or
+textbooks. They are compact references for revision and formula checking.
 
 ## Download
 
-[Download the PDF](./main.pdf)
-
-## Release
-
-Current draft:
-
-- [v0.2.0 - Formula Hierarchy and Core Extensions](https://github.com/Jerry-0821/deep-learning-formula-cheatsheet/releases/tag/v0.2.0): Updated PDF draft with formula hierarchy labels, high-value missing formulas, refreshed previews, and GitHub Actions build.
+| Sheet | Focus | PDF |
+| --- | --- | --- |
+| Deep Learning Formula Cheat Sheet | Neural networks, optimization, CNNs, sequence models, attention, Transformers, and tensor shapes | [Download PDF](./main.pdf) |
+| Machine Learning Formula & Decision Sheet | Regression, classification, evaluation, diagnosis, tree ensembles, clustering, recommenders, and reinforcement learning | [Download PDF](./machine-learning-formula-decision-sheet.pdf) |
 
 ## Preview
 
-![Notation preview](assets/preview/page-01.png)
+### Machine Learning Formula & Decision Sheet
 
-![Optimization preview](assets/preview/page-optimization.png)
+<p align="center">
+  <img src="assets/preview/machine-learning-lasso.png" width="47%" alt="Machine learning preview: Lasso and Elastic Net formulas">
+  <img src="assets/preview/machine-learning-roc-auc.png" width="47%" alt="Machine learning preview: PR-AUC and model diagnosis formulas">
+</p>
 
-![Style transfer preview](assets/preview/page-style-transfer.png)
+### Deep Learning Formula Cheat Sheet
 
-![Attention preview](assets/preview/page-attention.png)
+<p align="center">
+  <img src="assets/preview/page-optimization.png" width="47%" alt="Deep learning preview: optimization formulas">
+  <img src="assets/preview/page-transformer.png" width="47%" alt="Deep learning preview: Transformer formulas">
+</p>
 
-![Transformer preview](assets/preview/page-transformer.png)
+## Release
+
+Deep Learning current draft:
+
+- [v0.2.0 - Formula Hierarchy and Core Extensions](https://github.com/Jerry-0821/ml-dl-formula-cheatsheet/releases/tag/v0.2.0): Updated PDF draft with formula hierarchy labels, high-value missing formulas, refreshed previews, and GitHub Actions build.
+
+Machine Learning current artifact:
+
+- `machine-learning-formula-decision-sheet.pdf`: standalone mathematical review sheet with compact derivations and theory checkpoints.
 
 ## Current Status
 
-- `main.pdf` is available as the current v0.2.0 draft PDF.
-- `sections/02_logistic_regression.tex` through `sections/20_shape_reference.tex` are complete draft sections.
-- GitHub Actions builds the PDF successfully from `main.tex`.
-- Further formula verification and optional layout polish are ongoing.
+- `main.pdf` is available as the current Deep Learning v0.2.0 draft PDF.
+- `machine-learning-formula-decision-sheet.pdf` is available as the Machine Learning review PDF.
+- GitHub Actions currently builds the Deep Learning PDF successfully from `main.tex`.
+- The Deep Learning LaTeX sections are maintained in `sections/`.
 - `FORMULA_COVERAGE_PLAN.md` defines the formula coverage map and verification checklist.
 - `SOURCES.md` records primary workspace sources and source policy.
 
-## Build
+## Deep Learning Source Build
 
 Local build:
 
@@ -64,10 +86,10 @@ Manual fallback:
 latexmk -pdf main.tex
 ```
 
-GitHub Actions builds `main.pdf` and uploads it as the
+GitHub Actions builds the Deep Learning `main.pdf` and uploads it as the
 `deep-learning-formula-cheatsheet-pdf` artifact.
 
-## Style Rules
+## Deep Learning Authoring Rules
 
 - Keep entries compact.
 - Prefer display math for important formulas.
@@ -78,7 +100,7 @@ GitHub Actions builds `main.pdf` and uploads it as the
 - Prefer formulas, tensor shapes, update rules, and compact reference tables over prose.
 - Do not use external sources to expand project scope.
 
-## Formula Entry Standard
+## Deep Learning Formula Entry Standard
 
 Each formula entry should include only:
 
@@ -100,7 +122,7 @@ Target LaTeX pattern:
 \Notes{one or two short notes only when necessary}
 ```
 
-## Layout Standard
+## Deep Learning Layout Standard
 
 The PDF uses four layout types:
 
@@ -163,7 +185,7 @@ Required structure:
 - Shape notes, if relevant
 - Compact variants only if important
 
-## Scope
+## Deep Learning Scope
 
 ### V1 Core Sections
 
@@ -200,7 +222,7 @@ Required structure:
 - Modern YOLO variants
 - Advanced Transformer variants
 
-## Planned PDF Sections
+## Deep Learning PDF Sections
 
 1. Notation and Tensor Shapes
 2. Logistic Regression and Binary Classification
@@ -223,14 +245,14 @@ Required structure:
 19. ML Strategy Formula Appendix
 20. Shape Reference Tables
 
-## Source Policy
+## Deep Learning Source Policy
 
 Primary sources are the provided workspace materials. External sources should be
 used only to verify formulas, shapes, and notation for topics already in the
 coverage map. They must not expand the scope unless the topic is already planned.
 Every external source used must be recorded in `SOURCES.md`.
 
-## Framework Conventions
+## Deep Learning Framework Conventions
 
 - Example index: `(i)`
 - Layer index: `[l]`
