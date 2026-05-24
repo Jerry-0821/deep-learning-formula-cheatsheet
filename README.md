@@ -30,15 +30,23 @@ textbooks. They are compact references for revision and formula checking.
 ### Machine Learning Formula & Decision Sheet
 
 <p align="center">
+  <img src="assets/preview/machine-learning-contents.png" width="47%" alt="Machine learning preview: contents">
   <img src="assets/preview/machine-learning-lasso.png" width="47%" alt="Machine learning preview: Lasso and Elastic Net formulas">
+</p>
+<p align="center">
   <img src="assets/preview/machine-learning-roc-auc.png" width="47%" alt="Machine learning preview: PR-AUC and model diagnosis formulas">
+  <img src="assets/preview/machine-learning-deep-q.png" width="47%" alt="Machine learning preview: Q-learning and Deep Q Networks">
 </p>
 
 ### Deep Learning Formula Cheat Sheet
 
 <p align="center">
-  <img src="assets/preview/page-optimization.png" width="47%" alt="Deep learning preview: optimization formulas">
-  <img src="assets/preview/page-transformer.png" width="47%" alt="Deep learning preview: Transformer formulas">
+  <img src="assets/preview/deep-learning-contents.png" width="47%" alt="Deep learning preview: contents">
+  <img src="assets/preview/deep-learning-optimization.png" width="47%" alt="Deep learning preview: optimization formulas">
+</p>
+<p align="center">
+  <img src="assets/preview/deep-learning-attention.png" width="47%" alt="Deep learning preview: attention decoder formulas">
+  <img src="assets/preview/deep-learning-transformer.png" width="47%" alt="Deep learning preview: Transformer formulas">
 </p>
 
 ## Release
